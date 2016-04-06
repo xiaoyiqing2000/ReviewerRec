@@ -1,0 +1,25 @@
+{
+  "name": "Reviewer Recommender",
+  "description": "Reviewer Recommender",
+  "version": "2.11",
+  "permissions": [
+    "activeTab", "downloads", "<all_urls>", "tabs", "http://mc03.manuscriptcentral.com/*", "https://api.aminer.org/*"
+  ],
+  "browser_action": {
+    "default_title": "Reviewer Recommender",
+    "default_icon": "icon.png"
+  },
+  "web_accessible_resources": [
+    "loading.gif", "search.gif", "pick.gif", "recommend.gif", "viewmore.png", "logo.jpg", "default.jpg",
+    "select.png", "selected.png", "scis.txt", "recommend.png", "search.png", "close.png", "star_on.png",
+    "star_off.png", "thumb_up.png", "thumb_down.png", "keyword.png", "title.png", "co-author.png"
+  ],
+  "background": {
+    "scripts": ["p.js"],
+    "persistent": true
+  },
+  "icons": { "16": "icon.png",
+             "48": "icon.png",
+             "128": "icon.png" },
+  "manifest_version": 2
+}
