@@ -526,9 +526,11 @@ function searchNameAminer() {
   $('#loading').show();
   $('#more').hide();
   $('#menu').hide();
+  $('#rtb').empty();
   str = document.getElementById("searchname").value;
   explist = [];
-  var url = "https://api.aminer.org/api/search/person?query=" + str + "&size=100";
+  var url = "https://api.aminer.org/api/reviewer/search?query="+str+"&size=100";
+  // var url = "https://api.aminer.org/api/search/person?query=" + str + "&size=100";
   function formatData(data) {
     var formated = {}
     results = []
@@ -551,16 +553,20 @@ function searchNameAminer() {
       newperson.position = person.contact.position;
       newperson.picture_url = person.avatar;
       results.push(newperson);
+      // results.push(person);
     }
     // console.log(JSON.stringify(newperson));
     formated.results = results;
     return formated;
   }
   $.get(url, function(data, status){
-      var formated = formatData(data);
+      // var formated = formatData(data);
       // console.log(JSON.stringify(formated));
-      for (var i in formated.results){
-        explist.push(formated.results[i]);
+      data = JSON.parse(data);
+      console.log(JSON.stringify(data));
+
+      for (var i in data.results){
+        explist.push(data.results[i]);
       }
       changeOrder();
     });
@@ -601,6 +607,12 @@ function changeOrder() {
 
 function createRes() {
   window.sessionStorage.explist = JSON.stringify(explist);
+  var maxworkload = 10;
+  for (var i in explist) {
+    if (explist[i].workload != undefined && explist[i].workload > maxworkload)
+      maxworkload = explist[i].workload;
+  }
+
   for (var i in explist) {
     exptb = document.createElement('table');
     exptb.id = "exptb" + String(i);
@@ -710,7 +722,7 @@ function createRes() {
     var wl = explist[i].workload;
     if (wl == undefined) wl = 0;
     if (wl > 100) wl = 100;
-    workload.max = 100; workload.value = wl;
+    workload.max = maxworkload; workload.value = wl;
     col.appendChild(workload);
     row.appendChild(col);
     exptb.appendChild(row);
