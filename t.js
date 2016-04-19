@@ -108,8 +108,8 @@ function createUI(show) {
   img = document.createElement("img");
   img.src = chrome.extension.getURL("close.png");
   img.style.height = "16px"; img.align = "right";
-  img.onclick = function(){ 
-    $("#side").hide(); 
+  img.onclick = function(){
+    $("#side").hide();
     window.sessionStorage.show = "false";
   }
   col.appendChild(img);
@@ -118,7 +118,7 @@ function createUI(show) {
 
   qtb = document.createElement('table');
   qtb.cellSpacing = "1";
-  
+
   row = document.createElement('tr'); $(row).hide();
   col = document.createElement('td');
   col.appendChild(document.createTextNode("Title"));
@@ -149,7 +149,7 @@ function createUI(show) {
   inp.style.resize = "none";
   //inp.value = info[4];
   col.appendChild(inp); row.appendChild(col); qtb.appendChild(row);
-  
+
   row = document.createElement('tr');
   col = document.createElement('td'); col.colSpan = "2";
   col.appendChild(document.createTextNode("Keywords (Seperated by \",\"):"));
@@ -290,15 +290,16 @@ function createUI(show) {
   col.id = "menu"; $(col).hide();
   inp = document.createElement('input');
   inp.type = "text"; inp.style.width = "130px"; inp.id = "searchname";
-  inp.style.marginLeft = "1px"; inp.style.verticalAlign = "middle"; 
-  inp.onkeydown = function() { if (event.keyCode == 13) searchName(); };
+  inp.style.marginLeft = "1px"; inp.style.verticalAlign = "middle";
+  inp.onkeydown = function() { if (event.keyCode == 13) searchNameAminer(); };
   col.appendChild(inp);
   inp = document.createElement("input");
   inp.type = "image"; inp.src = chrome.extension.getURL("search.gif"); inp.style.verticalAlign = "middle";
-  inp.onclick = searchName;
+  // inp.onclick = searchName;
+  inp.onclick = searchNameAminer;
   col.appendChild(inp);
   sel = document.createElement("select"); sel.id = "rankorder"; sel.onchange = changeOrder;
-  sel.style.marginLeft = "10px"; sel.style.width = "85px"; sel.style.verticalAlign = "middle"; 
+  sel.style.marginLeft = "10px"; sel.style.width = "85px"; sel.style.verticalAlign = "middle";
   opt = document.createElement("option"); opt.text = "Relevance"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "H-index↑"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "H-index↓"; sel.add(opt, null);
@@ -309,11 +310,11 @@ function createUI(show) {
   row.style.borderBottomStyle = "hidden";
   table.appendChild(row);
 
-  row = document.createElement('tr'); 
+  row = document.createElement('tr');
   col = document.createElement('td');
   div = document.createElement('div');
   div.id = "result";
-  div.style.height = String(document.documentElement.offsetHeight - 300) + "px"; 
+  div.style.height = String(document.documentElement.offsetHeight - 300) + "px";
   div.style.overflow = "auto";
   div.style.overflowX = "hidden";
   img = document.createElement("img");
@@ -321,9 +322,9 @@ function createUI(show) {
   img.src = chrome.extension.getURL("loading.gif");
   img.style.filter = "chroma(color=#ffffff)";
   img.style.display = "none";
-  div.appendChild(img); 
+  div.appendChild(img);
   rtb = document.createElement("table");
-  rtb.id = "rtb"; rtb.style.width = "97%"; rtb.style.maxWidth = "97%"; rtb.style.wordWrap = "break-word"; 
+  rtb.id = "rtb"; rtb.style.width = "97%"; rtb.style.maxWidth = "97%"; rtb.style.wordWrap = "break-word";
   div.appendChild(rtb);
   par = document.createElement('div'); par.align = "center";
   more = document.createElement('a'); more.id = "more";
@@ -334,7 +335,7 @@ function createUI(show) {
   div.onscroll = function(){
     window.sessionStorage.scroll = div.scrollTop;
   }
-  col.appendChild(div); 
+  col.appendChild(div);
   row.appendChild(col);
   table.appendChild(row);
 
@@ -385,7 +386,7 @@ function query() {
   wordlist.push(words.join());
   getExpertList(wordlist);
   explist = [];
-  expall = []; 
+  expall = [];
 }
 
 function binScis(name) {
@@ -455,9 +456,9 @@ function getExpertList(words) {
       var data = {"query":words[i], "size":500, "hindex1":h1, "hindex2":h2}
       data.authors = JSON.parse(window.sessionStorage.authors)
       $.ajax({
-        type : "POST", 
-        url : url, 
-        data : $.toJSON(data), 
+        type : "POST",
+        url : url,
+        data : $.toJSON(data),
         contentType : "application/json"
       });
     }
@@ -465,7 +466,7 @@ function getExpertList(words) {
 }
 
 function statechange(strdata) {
-  data = JSON.parse(strdata); 
+  data = JSON.parse(strdata);
   //data = eval ("(" + strdata + ")");
   //alert(data);
   var i = finished;
@@ -520,6 +521,58 @@ function searchName() {
   changeOrder();
 }
 
+
+function searchNameAminer() {
+  $('#loading').show();
+  $('#more').hide();
+  $('#menu').hide();
+  $('#rtb').empty();
+  str = document.getElementById("searchname").value;
+  explist = [];
+  var url = "https://api.aminer.org/api/reviewer/search?query="+str+"&size=100";
+  // var url = "https://api.aminer.org/api/search/person?query=" + str + "&size=100";
+  function formatData(data) {
+    var formated = {}
+    results = []
+    for (var i in data.result){
+      var person = data.result[i];
+      var newperson = {}
+      newperson.name = person.name;
+      newperson.workload = 0;
+      newperson.email = "";
+      newperson.affiliation = person.contact.affiliation;
+      newperson.h_index = person.indices.h_index;
+      newperson.citation = person.indices.num_citation;
+      newperson.id = person.id;
+      newperson.rating = 6;
+      newperson.name_zh = person.name_zh;
+      newperson.papers = person.indices.num_pubs;
+      newperson.interests = person.tags.join(',');
+      newperson.relevance = 0;
+      newperson.homepage = person.contact.homepage;
+      newperson.position = person.contact.position;
+      newperson.picture_url = person.avatar;
+      results.push(newperson);
+      // results.push(person);
+    }
+    // console.log(JSON.stringify(newperson));
+    formated.results = results;
+    return formated;
+  }
+  $.get(url, function(data, status){
+      // var formated = formatData(data);
+      // console.log(JSON.stringify(formated));
+      data = JSON.parse(data);
+      console.log(JSON.stringify(data));
+
+      for (var i in data.results){
+        explist.push(data.results[i]);
+      }
+      changeOrder();
+    });
+}
+
+
 function changeOrder() {
   od = document.getElementById('rankorder').selectedIndex;
   if (od == 0)
@@ -554,13 +607,19 @@ function changeOrder() {
 
 function createRes() {
   window.sessionStorage.explist = JSON.stringify(explist);
+  var maxworkload = 10;
+  for (var i in explist) {
+    if (explist[i].workload != undefined && explist[i].workload > maxworkload)
+      maxworkload = explist[i].workload;
+  }
+
   for (var i in explist) {
     exptb = document.createElement('table');
     exptb.id = "exptb" + String(i);
     exptb.border = 0; exptb.cellPadding = 0;
 
     row = document.createElement('tr');
-    
+
     col = document.createElement('td');
     col.style.width = "42px"; col.style.maxWidth = "42px";
     a = document.createElement("a");
@@ -581,7 +640,7 @@ function createRes() {
     slt = document.createElement('input'); slt.id = "select"+String(i);
     slt.type = "image"; slt.value = i; slt.style.width = "43px";
     slt.src = chrome.extension.getURL("select.png");
-    slt.onclick = function() { 
+    slt.onclick = function() {
       for (var j in explist){
         document.getElementById("select"+String(j)).src = chrome.extension.getURL("select.png");
       }
@@ -593,7 +652,7 @@ function createRes() {
     col.appendChild(slt);
     col.style.verticalAlign = "top"; col.style.paddingBottom = "10px";
     row.appendChild(col);
-    
+
     col = document.createElement('td');
     col.style.width = "100%"; col.style.maxWidth = "100%";
     a = document.createElement("a");
@@ -611,17 +670,17 @@ function createRes() {
       img.style.marginLeft = "3px";
       col.appendChild(img);
     }
-    col.appendChild(document.createElement('br')); 
-    
+    col.appendChild(document.createElement('br'));
+
     txt = document.createElement('span');
     txt.style.fontFamily = "times"; txt.style.color = "grey";
     if (explist[i].position != null && explist[i].position.length > 100) { explist[i].position = null; }
     txt.appendChild(document.createTextNode(' (' + explist[i].position + ', ' + explist[i].affiliation + ')'));
-    if (explist[i].position != null && explist[i].position != "" 
+    if (explist[i].position != null && explist[i].position != ""
       && explist[i].affiliation != null && explist[i].affiliation != "") {
-      col.appendChild(txt); col.appendChild(document.createElement('br')); 
+      col.appendChild(txt); col.appendChild(document.createElement('br'));
     }
-    
+
     function addNameValue(name, value, breakline) {
       txt = document.createElement('span');
       txt.style.fontFamily = "arial"; txt.style.fontWeight = "700";
@@ -630,9 +689,9 @@ function createRes() {
       txt = document.createElement('span'); txt.style.fontFamily = "arial";
       txt.appendChild(value);
       col.appendChild(txt);
-      if (breakline) col.appendChild(document.createElement('br')); 
+      if (breakline) col.appendChild(document.createElement('br'));
     }
-    
+
     addNameValue("H-index", document.createTextNode(explist[i].h_index), true);
     str = '';
     if (explist[i].interests != null) str += explist[i].interests.replace(/,/g, ", ");
@@ -643,9 +702,9 @@ function createRes() {
     if (explist[i].email == null) explist[i].email = "unknown";
     a.appendChild(document.createTextNode(explist[i].email));
     addNameValue("E-mail", a, true);
-    
+
     col.style.verticalAlign = "top";
-    
+
     row.appendChild(col);
     col.style.paddingBottom = "4px";
     exptb.appendChild(row);
@@ -663,7 +722,7 @@ function createRes() {
     var wl = explist[i].workload;
     if (wl == undefined) wl = 0;
     if (wl > 100) wl = 100;
-    workload.max = 100; workload.value = wl;
+    workload.max = maxworkload; workload.value = wl;
     col.appendChild(workload);
     row.appendChild(col);
     exptb.appendChild(row);
@@ -780,7 +839,7 @@ function analyze(){
   url = url.replace(/#.*/, "");
   url = url + "?" + $("form").serialize();
   info = ["type0"];
-  
+
   resetField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
   resetDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
 
@@ -789,7 +848,7 @@ function analyze(){
     doc = parser.parseFromString(data, "text/html");
     //resetField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
     //resetDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
-    
+
     var inf = [].slice.apply(doc.getElementsByClassName("pagecontents"));
 
     flag = 0;
@@ -1034,9 +1093,9 @@ function sendDataToAminer(){
     data.authors = authorlist;
     data.reviewers = reviewerlist;
     $.ajax({
-      type : "POST", 
-      url : url, 
-      data : $.toJSON(data), 
+      type : "POST",
+      url : url,
+      data : $.toJSON(data),
       contentType : "application/json"
     });
   //}
