@@ -846,82 +846,135 @@ function analyze(){
   $.get(url, function(data, status) {
     parser = new DOMParser();
     doc = parser.parseFromString(data, "text/html");
-    //resetField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
-    //resetDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
 
-    var inf = [].slice.apply(doc.getElementsByClassName("pagecontents"));
+    // var inf = [].slice.apply(doc.getElementsByClassName("pagecontents"));
 
-    flag = 0;
-    txt = "";
-    for (var i in inf) {
-      var text = inf[i].innerHTML;
-      if (text.match("Authors") != null) {
-        flag = 1;
-        authorlist = [];
+    // flag = 0;
+    // txt = "";
+    // for (var i in inf) {
+    //   var text = inf[i].innerHTML;
+    //   if (text.match("Authors") != null) {
+    //     flag = 1;
+    //     authorlist = [];
+    //     authorfinished = 0;
+    //   }
+    //   if (flag == 1 && text.match("Contact Author") != null) {
+    //     info.push(txt); txt = "";
+    //     flag = 0;
+    //     window.sessionStorage.authors = JSON.stringify(authorlist);
+    //   }
+    //   if (text == "Title:")
+    //     flag = 2;
+    //   if (flag == 2 && text == "Manuscript ID:") {
+    //     info.push(txt); txt = "";
+    //     flag = 0;
+    //   }
+    //   if (flag == 3 && text.match(":") != null) {
+    //     info.push(txt); txt = "";
+    //     flag = 0;
+    //   }
+    //   if (text.match("Keyword") != null)
+    //     flag = 3;
+    //   if (flag == 0)
+    //     continue;
+    //   if (flag == 1) {
+    //     if (text.match("<a href=.*>") == null || text.match("javascript:popWindow") == null)
+    //       continue;
+    //     str = text.replace(/[\s\S]*javascript\:popWindow\(\'/, "");
+    //     str = str.replace(/'[\s\S]*/g, "");
+    //     console.log(str);
+    //     host = window.location.host;
+    //     url = host + "/" + str;
+    //     text = text.replace(/<a href=[^>]*>/, "");
+    //     text = text.replace(/<(\s|\S)*$/, "");
+    //     text = text.replace(',', '').trim();
+    //     author = {};
+    //     author.name = text;
+    //     x = $($(inf[i]).parent()).get(0);
+    //     x = $($(x).next()).get(0);
+    //     x = $($(x).next()).get(0);
+    //     x = $($(x).next()).get(0);
+    //     author.affiliation = $.trim(x.getElementsByClassName("pagecontents")[0].textContent);
+    //     // console.log(author);
+    //     authorlist.push(author);
+    //     if (authorlist.length == 1) $.get(url, function(data, status){ getAuthorEmail(0, data); });
+    //     if (authorlist.length == 2) $.get(url, function(data, status){ getAuthorEmail(1, data); });
+    //     if (authorlist.length == 3) $.get(url, function(data, status){ getAuthorEmail(2, data); });
+    //     if (authorlist.length == 4) $.get(url, function(data, status){ getAuthorEmail(3, data); });
+    //     if (authorlist.length == 5) $.get(url, function(data, status){ getAuthorEmail(4, data); });
+    //     if (authorlist.length == 6) $.get(url, function(data, status){ getAuthorEmail(5, data); });
+    //     if (authorlist.length == 7) $.get(url, function(data, status){ getAuthorEmail(6, data); });
+    //     if (authorlist.length == 8) $.get(url, function(data, status){ getAuthorEmail(7, data); });
+    //     if (authorlist.length == 9) $.get(url, function(data, status){ getAuthorEmail(8, data); });
+    //     if (authorlist.length == 10) $.get(url, function(data, status){ getAuthorEmail(9, data); });
+    //     if (txt == "") {
+    //       txt = text;
+    //     } else {
+    //       txt = txt + ", " + text;
+    //     }
+    //   }
+    //   if (flag == 2) {
+    //     if (text != "Title:")
+    //       txt = txt + text;
+    //   }
+    //   if (flag == 3) {
+    //     if (text != "Keywords:")
+    //       txt = txt + text.replace(/<img[^>]*> /g, "");
+    //   }
+    // }
+
+    var table = doc.getElementById("brn15");
+    var left = [].slice.apply(table.getElementsByClassName("alternatetablecolor"));
+    var right = [].slice.apply(table.getElementsByClassName("tablelightcolor"));
+
+    for (var i in left){
+      lefttext = left[i].innerText;
+      righttext = right[i].innerText;
+      if (lefttext == "Title:")
+        info.push(righttext);
+      if (lefttext.match("Authors") != null){
         authorfinished = 0;
-      }
-      if (flag == 1 && text.match("Contact Author") != null) {
-        info.push(txt); txt = "";
-        flag = 0;
-        window.sessionStorage.authors = JSON.stringify(authorlist);
-      }
-      if (text == "Title:")
-        flag = 2;
-      if (flag == 2 && text == "Manuscript ID:") {
-        info.push(txt); txt = "";
-        flag = 0;
-      }
-      if (flag == 3 && text.match(":") != null) {
-        info.push(txt); txt = "";
-        flag = 0;
-      }
-      if (text.match("Keyword") != null)
-        flag = 3;
-      if (flag == 0)
-        continue;
-      if (flag == 1) {
-        if (text.match("<a href=.*>") == null || text.match("javascript:popWindow") == null)
-          continue;
-        str = text.replace(/[\s\S]*javascript\:popWindow\(\'/, "");
-        str = str.replace(/'[\s\S]*/g, "");
-        host = window.location.host;
-        url = host + "/" + str;
-        text = text.replace(/<a href=[^>]*>/, "");
-        text = text.replace(/<(\s|\S)*$/, "");
-        text = text.replace(',', '').trim();
-        author = {};
-        author.name = text;
-        x = $($(inf[i]).parent()).get(0);
-        x = $($(x).next()).get(0);
-        x = $($(x).next()).get(0);
-        x = $($(x).next()).get(0);
-        author.affiliation = $.trim(x.getElementsByClassName("pagecontents")[0].textContent);
-        authorlist.push(author);
-        if (authorlist.length == 1) $.get(url, function(data, status){ getAuthorEmail(0, data); });
-        if (authorlist.length == 2) $.get(url, function(data, status){ getAuthorEmail(1, data); });
-        if (authorlist.length == 3) $.get(url, function(data, status){ getAuthorEmail(2, data); });
-        if (authorlist.length == 4) $.get(url, function(data, status){ getAuthorEmail(3, data); });
-        if (authorlist.length == 5) $.get(url, function(data, status){ getAuthorEmail(4, data); });
-        if (authorlist.length == 6) $.get(url, function(data, status){ getAuthorEmail(5, data); });
-        if (authorlist.length == 7) $.get(url, function(data, status){ getAuthorEmail(6, data); });
-        if (authorlist.length == 8) $.get(url, function(data, status){ getAuthorEmail(7, data); });
-        if (authorlist.length == 9) $.get(url, function(data, status){ getAuthorEmail(8, data); });
-        if (authorlist.length == 10) $.get(url, function(data, status){ getAuthorEmail(9, data); });
-        if (txt == "") {
-          txt = text;
-        } else {
-          txt = txt + ", " + text;
+        pagecontents = [].slice.apply(right[i].getElementsByClassName("pagecontents"));
+        authorsname = [];
+        authorlist = [];
+        var j = 0;
+        while(j < pagecontents.length){
+          author = {}
+          name = pagecontents[j].innerText.trim();
+          name = name.replace(',', '').trim();
+          authorsname.push(name);
+          a = pagecontents[j].getElementsByTagName('a')[0];
+          if (a == null || a.href.match("javascript:popWindow") == null){
+            j += 1;
+            continue;
+          }
+          j += 1;
+          while(pagecontents[j].getElementsByTagName('a')[0] != null)
+            j += 1;
+          affiliation = pagecontents[j].innerText.trim();
+          author.name = name;
+          author.affiliation = affiliation;
+          authorlist.push(author);
+          str = a.href.replace(/[\s\S]*javascript\:popWindow\(\'/, "");
+          str = str.replace(/'[\s\S]*/g, "");
+          host = window.location.host;
+          url = host + "/" + str;
+
+          (function(url, length){
+            $.get(url, function(data, status){ getAuthorEmail(length-1, data); });
+          })(url, authorlist.length);
+
+          j += 1;
         }
+        info.push(authorsname.join(", "));
       }
-      if (flag == 2) {
-        if (text != "Title:")
-          txt = txt + text;
-      }
-      if (flag == 3) {
-        if (text != "Keywords:")
-          txt = txt + text.replace(/<img[^>]*> /g, "");
+      if(lefttext.match("Keyword") != null){
+        info.push(righttext);
       }
     }
+
+    // console.log(info);
+    // console.log(authorlist);
 
     getAbstract = false;
     var links = [].slice.apply(doc.getElementsByTagName('a'));
@@ -962,7 +1015,7 @@ function analyze(){
       window.sessionStorage.title = info[1];
       window.sessionStorage.authorsname = info[2];
       window.sessionStorage.keywords = nwords;
-      window.sessionStorage.abstract = info[4];
+      // window.sessionStorage.abstract = info[4];
       today = new Date();
       window.sessionStorage.date = today.toDateString();
       document.getElementById('keywords').value = window.sessionStorage.keywords;
