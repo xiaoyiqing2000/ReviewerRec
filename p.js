@@ -32,7 +32,6 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
 
 function exec(tab, show) {
   if (tab.url.match("manuscriptcentral.com") != null) {
-    //chrome.tabs.executeScript(Tabs[0].id, {file: 'bootstrap.min.js', allFrames: true});
     chrome.tabs.executeScript(tab.id, {file: 'content.js', allFrames: true});
     chrome.tabs.executeScript(tab.id, {file: 'scholarone.js', allFrames: true});
   }

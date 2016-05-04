@@ -444,10 +444,11 @@ function getExpertList(words) {
       txt = x.options[x.selectedIndex].text;
       url = url + "&language=" + txt;
     }
-    if (window.sessionStorage.paperid == null) {
-      analyze();
+    if (window.sessionStorage.paperid != null) {
+      if (window.sessionStorage.paperid.match('-') != null)
+        url = url + "&venue=" + window.sessionStorage.paperid.split('-')[0];
     }
-    url = url + "&venue=" + window.sessionStorage.paperid.split('-')[0];
+    
     $.get(url, function(data, status){
       statechange(data);
     });
