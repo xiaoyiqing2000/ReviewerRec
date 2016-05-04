@@ -1,9 +1,9 @@
 {
   "name": "Reviewer Recommender",
   "description": "Reviewer Recommender",
-  "version": "2.11",
+  "version": "3.0",
   "permissions": [
-    "activeTab", "downloads", "<all_urls>", "tabs", "http://mc03.manuscriptcentral.com/*", "https://api.aminer.org/*"
+    "activeTab", "downloads", "<all_urls>", "tabs", "storage"
   ],
   "browser_action": {
     "default_title": "Reviewer Recommender",

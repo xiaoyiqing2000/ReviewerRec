@@ -376,6 +376,7 @@ function query() {
   window.sessionStorage.inp2 = document.getElementById("hindex2").checked;
   window.sessionStorage.inp3 = document.getElementById("hindex3").checked;
   window.sessionStorage.inp4 = document.getElementById("hindex4").checked;
+  document.getElementById('rankorder').selectedIndex = 0;
   wordlist = [];
   for (var i in words){
     if (words[i].length > 4){
@@ -528,6 +529,7 @@ function searchNameAminer() {
   $('#menu').hide();
   $('#rtb').empty();
   str = document.getElementById("searchname").value;
+  document.getElementById('rankorder').selectedIndex = 2;
   explist = [];
   var url = "https://api.aminer.org/api/reviewer/search?query="+str+"&size=100";
   // var url = "https://api.aminer.org/api/search/person?query=" + str + "&size=100";
@@ -577,8 +579,8 @@ function changeOrder() {
   od = document.getElementById('rankorder').selectedIndex;
   if (od == 0)
     explist.sort(function(a,b) {
-      if (Number(a.myid) < Number(b.myid)) return -1;
-      if (Number(a.myid) > Number(b.myid)) return 1;
+      if (Number(a.relevance) > Number(b.relevance)) return -1;
+      if (Number(a.relevance) < Number(b.relevance)) return 1;
       return 0;
     });
   if (od == 1)
@@ -847,82 +849,6 @@ function analyze(){
     parser = new DOMParser();
     doc = parser.parseFromString(data, "text/html");
 
-    // var inf = [].slice.apply(doc.getElementsByClassName("pagecontents"));
-
-    // flag = 0;
-    // txt = "";
-    // for (var i in inf) {
-    //   var text = inf[i].innerHTML;
-    //   if (text.match("Authors") != null) {
-    //     flag = 1;
-    //     authorlist = [];
-    //     authorfinished = 0;
-    //   }
-    //   if (flag == 1 && text.match("Contact Author") != null) {
-    //     info.push(txt); txt = "";
-    //     flag = 0;
-    //     window.sessionStorage.authors = JSON.stringify(authorlist);
-    //   }
-    //   if (text == "Title:")
-    //     flag = 2;
-    //   if (flag == 2 && text == "Manuscript ID:") {
-    //     info.push(txt); txt = "";
-    //     flag = 0;
-    //   }
-    //   if (flag == 3 && text.match(":") != null) {
-    //     info.push(txt); txt = "";
-    //     flag = 0;
-    //   }
-    //   if (text.match("Keyword") != null)
-    //     flag = 3;
-    //   if (flag == 0)
-    //     continue;
-    //   if (flag == 1) {
-    //     if (text.match("<a href=.*>") == null || text.match("javascript:popWindow") == null)
-    //       continue;
-    //     str = text.replace(/[\s\S]*javascript\:popWindow\(\'/, "");
-    //     str = str.replace(/'[\s\S]*/g, "");
-    //     console.log(str);
-    //     host = window.location.host;
-    //     url = host + "/" + str;
-    //     text = text.replace(/<a href=[^>]*>/, "");
-    //     text = text.replace(/<(\s|\S)*$/, "");
-    //     text = text.replace(',', '').trim();
-    //     author = {};
-    //     author.name = text;
-    //     x = $($(inf[i]).parent()).get(0);
-    //     x = $($(x).next()).get(0);
-    //     x = $($(x).next()).get(0);
-    //     x = $($(x).next()).get(0);
-    //     author.affiliation = $.trim(x.getElementsByClassName("pagecontents")[0].textContent);
-    //     // console.log(author);
-    //     authorlist.push(author);
-    //     if (authorlist.length == 1) $.get(url, function(data, status){ getAuthorEmail(0, data); });
-    //     if (authorlist.length == 2) $.get(url, function(data, status){ getAuthorEmail(1, data); });
-    //     if (authorlist.length == 3) $.get(url, function(data, status){ getAuthorEmail(2, data); });
-    //     if (authorlist.length == 4) $.get(url, function(data, status){ getAuthorEmail(3, data); });
-    //     if (authorlist.length == 5) $.get(url, function(data, status){ getAuthorEmail(4, data); });
-    //     if (authorlist.length == 6) $.get(url, function(data, status){ getAuthorEmail(5, data); });
-    //     if (authorlist.length == 7) $.get(url, function(data, status){ getAuthorEmail(6, data); });
-    //     if (authorlist.length == 8) $.get(url, function(data, status){ getAuthorEmail(7, data); });
-    //     if (authorlist.length == 9) $.get(url, function(data, status){ getAuthorEmail(8, data); });
-    //     if (authorlist.length == 10) $.get(url, function(data, status){ getAuthorEmail(9, data); });
-    //     if (txt == "") {
-    //       txt = text;
-    //     } else {
-    //       txt = txt + ", " + text;
-    //     }
-    //   }
-    //   if (flag == 2) {
-    //     if (text != "Title:")
-    //       txt = txt + text;
-    //   }
-    //   if (flag == 3) {
-    //     if (text != "Keywords:")
-    //       txt = txt + text.replace(/<img[^>]*> /g, "");
-    //   }
-    // }
-
     var table = doc.getElementById("brn15");
     var left = [].slice.apply(table.getElementsByClassName("alternatetablecolor"));
     var right = [].slice.apply(table.getElementsByClassName("tablelightcolor"));
@@ -1002,13 +928,11 @@ function analyze(){
 
     //document.getElementById('title').value = info[1];
     //document.getElementById('authors').value = info[2];
-    nwords = info[3].replace(/</g, '');
-    nwords = nwords.replace(/&lt;/g, ',');
-    nwords = nwords.replace(/;/g, ',');
-    nwords = nwords.replace(/\S*\.\S*\s/g, ', ');
+    nwords = info[3].replace(/&lt;/g, ',').replace(/;/g, ',').replace(/</g, ',');
+    nwords = nwords.replace(/\S*\.\S*\s/g, ', ').replace(/^[A-Z]\s/, '').replace(/\s[A-Z]\s/g, ', ');
     nwords = nwords.replace(/\s\s/g, ' ');
-    nwords = nwords.replace(/,\s,/g, ',');
-    nwords = nwords.replace(/^,\s*/, '');
+    nwords = nwords.replace(/,\s*,/g, ',');
+    nwords = nwords.replace(/^,\s*/g, '');
     //document.getElementById('keywords').value = nwords;
     //document.getElementById('abstract').value = info[4];
     if (window.sessionStorage.keywords == undefined){
