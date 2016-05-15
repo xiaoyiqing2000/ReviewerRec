@@ -9,10 +9,6 @@ x = document.getElementsByClassName("redesigndetailsontext")[0];
 if (x != null)
   isreviewing = true;
 
-isfirsttime = true;
-if (window.sessionStorage.title != null)
-  isfirsttime = false;
-
 txt = $.ajax({url:chrome.extension.getURL("scis.txt"), async : false}).responseText;
 scis = txt.split('\r\n');
 
@@ -32,9 +28,15 @@ if (ismanuscript) {
     window.sessionStorage.clear();
   } else {
     chrome.runtime.sendMessage("ok");
-    if (window.sessionStorage.keywords != null){
+    docu_id = document.getElementsByName('XIK_DOCU_ID')[0].value;
+    //alert(docu_id);
+    if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords != null){
       document.getElementById('keywords').value = window.sessionStorage.keywords;
     } else {
+      show = window.sessionStorage.show;
+      window.sessionStorage.clear();
+      window.sessionStorage.show = show;
+      window.sessionStorage.docu_id = docu_id;
       analyze();
     }
     if (window.sessionStorage.explist != null){
@@ -1124,7 +1126,6 @@ function getReviewerEmail(id, data){
 }
 
 function sendDataToAminer(){
-  window.sessionStorage.analyze = "true";
   if (reviewerlist.length == 0) return;
   window.sessionStorage.reviewers = JSON.stringify(reviewerlist);
   window.sessionStorage.authors = JSON.stringify(authorlist);
