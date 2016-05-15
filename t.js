@@ -448,7 +448,7 @@ function getExpertList(words) {
       if (window.sessionStorage.paperid.match('-') != null)
         url = url + "&venue=" + window.sessionStorage.paperid.split('-')[0];
     }
-    
+
     $.get(url, function(data, status){
       statechange(data);
     });
@@ -575,6 +575,54 @@ function searchNameAminer() {
     });
 }
 
+function filter() {
+  ans = [];
+  function checkName(already, expert){
+    // console.log(JSON.stringify(already));
+    // console.log(JSON.stringify(expert));
+
+    name1 = already.name.toLowerCase().replace(',', ' ').trim().split(' ');
+    name2 = expert.name.toLowerCase().replace(',', ' ').trim().split(' ');
+    // console.log(JSON.stringify(name1));
+    // console.log(JSON.stringify(name2));
+    if (name1.join('') == name2.join('') || name1.reverse().join('') == name2.join(''))
+      return true;
+    return false;
+  }
+  for (var i in explist){
+    exp = explist[i];
+    var flag = false;
+
+    reviewers = [];
+    if (sessionStorage.reviewers != null)
+      reviewers = JSON.parse(sessionStorage.reviewers);
+    for (var r in reviewers){
+      reviewer = reviewers[r];
+      if (checkName(reviewer, exp)){
+        // console.log(JSON.stringify(reviewer.name));
+        flag = true;
+        break;
+      }
+    }
+    if (flag)
+      continue;
+    authors = [];
+    if (sessionStorage.authors != null)
+      authors = JSON.parse(sessionStorage.authors);
+    for (var r in authors){
+      author = authors[r];
+      if (checkName(author, exp)){
+        // console.log(JSON.stringify(author.name));
+        flag = true;
+        break;
+      }
+    }
+    if (flag)
+      continue;
+    ans.push(exp);
+  }
+  explist = ans;
+}
 
 function changeOrder() {
   od = document.getElementById('rankorder').selectedIndex;
@@ -604,6 +652,21 @@ function changeOrder() {
       if (a.affiliation > b.affiliation) return 1;
       return 0;
     });
+
+  email = []
+  noemail = []
+  for (var i in explist){
+    exp = explist[i];
+    if (exp.email == '')
+      noemail.push(exp);
+    else
+      email.push(exp);
+  }
+  explist = email.concat(noemail)
+  filter();
+  // console.log(JSON.stringify(explist));
+  // console.log(JSON.stringify(noemail));
+  // console.log(JSON.stringify(email));
   $('#rtb').empty();
   createRes();
 }
@@ -977,6 +1040,10 @@ function getReviewerInfo(){
     if (flag == true && list[i].innerHTML.match("mailpopup") != null) {
       reviewer = {}
       reviewer.name = $(list[i]).text();
+      // console.log(reviewer.name);
+      // console.log(type(reviewer.name));
+      reviewer.name = reviewer.name.replace('recommended', '').trim();
+      // console.log(reviewer.name);
       x = list[i];
       while (x.className != "tablelightcolor"){
         x = x.parentNode;
