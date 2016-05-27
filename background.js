@@ -38,8 +38,10 @@ function exec(tab, show) {
   chrome.tabs.executeScript(tab.id, {file: 'jquery.min.js', allFrames: true});
   chrome.tabs.executeScript(tab.id, {file: 'jquery.json.js', allFrames: true});
   chrome.tabs.executeScript(tab.id, {file: 'jquery.soap.js', allFrames: true});
-  chrome.tabs.executeScript(tab.id, {file: 't.js', allFrames: false}, function(){
+  chrome.tabs.executeScript(tab.id, {file: 'createUI.js', allFrames: false}, function(){
     //if (show) chrome.tabs.executeScript(tab.id, {code: "$('#side').show();"});
   });
+  chrome.tabs.executeScript(tab.id, {file: 'queryAPI.js', allFrames: false}, function(){});
+  chrome.tabs.executeScript(tab.id, {file: 'analyze.js', allFrames: false}, function(){});
 }
 

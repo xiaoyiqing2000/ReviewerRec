@@ -7,19 +7,17 @@
   ],
   "browser_action": {
     "default_title": "Reviewer Recommender",
-    "default_icon": "icon.png"
+    "default_icon": "resource/icon.png"
   },
   "web_accessible_resources": [
-    "loading.gif", "search.gif", "pick.gif", "recommend.gif", "viewmore.png", "logo.jpg", "default.jpg",
-    "select.png", "selected.png", "scis.txt", "recommend.png", "search.png", "close.png", "star_on.png",
-    "star_off.png", "thumb_up.png", "thumb_down.png", "keyword.png", "title.png", "co-author.png"
+    "resource/*"
   ],
   "background": {
-    "scripts": ["p.js"],
+    "scripts": ["background.js"],
     "persistent": true
   },
-  "icons": { "16": "icon.png",
-             "48": "icon.png",
-             "128": "icon.png" },
+  "icons": { "16": "resource/icon.png",
+             "48": "resource/icon.png",
+             "128": "resource/icon.png" },
   "manifest_version": 2
 }
