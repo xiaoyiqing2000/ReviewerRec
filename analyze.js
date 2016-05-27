@@ -90,6 +90,7 @@ function analyze(){
           if (getAbstract && reviewerfinished == reviewerlist.length && authorfinished == authorlist.length) {
             sendDataToAminer();
           }
+          extractKeywords();
         });
       }
     }
@@ -251,6 +252,58 @@ function sendDataToAminer(){
   //}
   //document.body.appendChild(btn);
   //$(btn).click();
+}
+
+function extractKeywords(){
+  if (sessionStorage.abstract == null)
+    return;
+  function saveKeywords(XMLHttpRequest, textStatus) {
+    terms = XMLHttpRequest.responseJSON.terms;
+    keywords = [];
+    for (var i in terms){
+      keywords.push(terms[i].t);
+    }
+    if (sessionStorage.extractedKeywords == null){
+      sessionStorage.extractedKeywords = keywords.join(",");
+    }
+    else{
+      saved = sessionStorage.extractedKeywords.split(",");
+      length = saved.length;
+      for (var i in keywords){
+        if (saved.indexOf(keywords[i]) == -1){
+          if (length >= 5)
+            saved.splice(length+i, 0, keywords[i])
+          else
+            saved.splice(i, 0, keywords[i])
+        }
+      }
+      sessionStorage.extractedKeywords = saved.join(",");
+    }
+  }
+
+  var url = "https://loki.aminer.org/api/te";
+  var data = {};
+  data.s = sessionStorage.abstract;
+  data.t = 2;
+  data.n = 5;
+
+  $.ajax({
+    type : "POST",
+    url : url,
+    data : $.toJSON(data),
+    contentType : "application/json",
+    complete : saveKeywords
+  });
+
+  data.s = sessionStorage.keywords;
+  data.n = 2;
+  $.ajax({
+    type : "POST",
+    url : url,
+    data : $.toJSON(data),
+    contentType : "application/json",
+    complete : saveKeywords
+  });
 }
 
 

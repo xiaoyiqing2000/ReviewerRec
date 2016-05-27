@@ -160,8 +160,10 @@ function createUI(show) {
   img.src = chrome.extension.getURL("resource/refresh.png");
   img.style.height = "16px"; img.align = "right";
   img.onclick = function(){
-    $("#side").hide();
-    window.sessionStorage.show = "false";
+    if (document.getElementById('keywords').value == sessionStorage.extractedKeywords)
+      document.getElementById('keywords').value = sessionStorage.keywords;
+    else
+      document.getElementById('keywords').value = sessionStorage.extractedKeywords;
   }
 
   row.appendChild(col); row.appendChild(img); qtb.appendChild(row);
@@ -262,7 +264,7 @@ function createUI(show) {
   sub.type = "image"; sub.src = chrome.extension.getURL("resource/search.png");
   sub.style.width = "150px";
   sub.style.marginTop = "4px"; sub.style.marginBottom = "4px"; //sub.style.marginRight = "4px";
-  sub.align = "center"; sub.onclick = query;
+  sub.align = "center"; sub.onclick = function(){ query();};
   col.appendChild(sub);
   /*sub = document.createElement("input");
   sub.type = "image"; sub.src = chrome.extension.getURL("resource/title.png");
@@ -308,9 +310,9 @@ function createUI(show) {
   inp = document.createElement("input");
   inp.type = "image"; inp.src = chrome.extension.getURL("resource/search.gif"); inp.style.verticalAlign = "middle";
   // inp.onclick = searchName;
-  inp.onclick = searchNameAminer;
+  inp.onclick = function(){ searchNameAminer();};
   col.appendChild(inp);
-  sel = document.createElement("select"); sel.id = "rankorder"; sel.onchange = changeOrder;
+  sel = document.createElement("select"); sel.id = "rankorder"; sel.onchange = function(){ changeOrder();};
   sel.style.marginLeft = "10px"; sel.style.width = "85px"; sel.style.verticalAlign = "middle";
   opt = document.createElement("option"); opt.text = "Relevance"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "H-index↑"; sel.add(opt, null);
@@ -342,7 +344,7 @@ function createUI(show) {
   more = document.createElement('a'); more.id = "more";
   img = document.createElement("img"); img.src = chrome.extension.getURL("resource/viewmore.png");
   more.appendChild(img);
-  more.onclick = showMore; more.style.display = "none"; more.style.cursor = "pointer";
+  more.onclick = function(){ showMore();}; more.style.display = "none"; more.style.cursor = "pointer";
   par.appendChild(more); div.appendChild(par);
   div.onscroll = function(){
     window.sessionStorage.scroll = div.scrollTop;
