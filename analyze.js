@@ -227,7 +227,6 @@ function getReviewerEmail(id, data){
 }
 
 function sendDataToAminer(){
-  window.sessionStorage.analyze = "true";
   if (reviewerlist.length == 0) return;
   window.sessionStorage.reviewers = JSON.stringify(reviewerlist);
   window.sessionStorage.authors = JSON.stringify(authorlist);
@@ -253,3 +252,5 @@ function sendDataToAminer(){
   //document.body.appendChild(btn);
   //$(btn).click();
 }
+
+

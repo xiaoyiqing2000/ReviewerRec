@@ -84,9 +84,12 @@ function getExpertList(words) {
       txt = x.options[x.selectedIndex].text;
       url = url + "&language=" + txt;
     }
-    if (window.sessionStorage.paperid != null) {
-      if (window.sessionStorage.paperid.match('-') != null)
-        url = url + "&venue=" + window.sessionStorage.paperid.split('-')[0];
+    if (window.sessionStorage.paperid != null && window.sessionStorage.paperid.match('-') != null) {
+      url = url + "&venue=" + window.sessionStorage.paperid.split('-')[0];
+    } else {
+      if (window.location.href.match('tkdd') != null || window.location.href.match('tkde') != null) {
+        url = url + "&venue=TKDD";
+      }
     }
 
     $.get(url, function(data, status){
@@ -528,3 +531,5 @@ function fillin(i) {
     eadd = "";
   document.getElementsByName("EMAIL_ADDRESS")[0].value = eadd;
 }
+
+

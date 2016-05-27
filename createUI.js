@@ -9,10 +9,6 @@ x = document.getElementsByClassName("redesigndetailsontext")[0];
 if (x != null)
   isreviewing = true;
 
-isfirsttime = true;
-if (window.sessionStorage.title != null)
-  isfirsttime = false;
-
 txt = $.ajax({url:chrome.extension.getURL("resource/scis.txt"), async : false}).responseText;
 scis = txt.split('\r\n');
 
@@ -32,9 +28,15 @@ if (ismanuscript) {
     window.sessionStorage.clear();
   } else {
     chrome.runtime.sendMessage("ok");
-    if (window.sessionStorage.keywords != null){
+    docu_id = document.getElementsByName('XIK_DOCU_ID')[0].value;
+    //alert(docu_id);
+    if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords != null){
       document.getElementById('keywords').value = window.sessionStorage.keywords;
     } else {
+      show = window.sessionStorage.show;
+      window.sessionStorage.clear();
+      window.sessionStorage.show = show;
+      window.sessionStorage.docu_id = docu_id;
       analyze();
     }
     if (window.sessionStorage.explist != null){
@@ -153,6 +155,7 @@ function createUI(show) {
   row = document.createElement('tr');
   col = document.createElement('td'); col.colSpan = "2";
   col.appendChild(document.createTextNode("Keywords (Seperated by \",\"):"));
+
   img = document.createElement("img");
   img.src = chrome.extension.getURL("resource/refresh.png");
   img.style.height = "16px"; img.align = "right";
@@ -160,8 +163,9 @@ function createUI(show) {
     $("#side").hide();
     window.sessionStorage.show = "false";
   }
-  col.appendChild(img);
-  row.appendChild(col); qtb.appendChild(row);
+
+  row.appendChild(col); row.appendChild(img); qtb.appendChild(row);
+
   row = document.createElement('tr');
   col = document.createElement('td'); col.colSpan = "2";
   inp = document.createElement('textarea');
@@ -362,8 +366,3 @@ function createUI(show) {
   setSide();
 
 }
-
-
-
-
-
