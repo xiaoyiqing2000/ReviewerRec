@@ -10,7 +10,7 @@ function query() {
   document.getElementById('rankorder').selectedIndex = 0;
   $('#rtb').empty();
   var words = document.getElementById("keywords").value.split(",");
-  window.sessionStorage.keywords = document.getElementById("keywords").value;
+  window.sessionStorage.keywords0 = document.getElementById("keywords").value;
   window.sessionStorage.displaynum = "20";
   window.sessionStorage.inp1 = document.getElementById("hindex1").checked;
   window.sessionStorage.inp2 = document.getElementById("hindex2").checked;
@@ -84,13 +84,7 @@ function getExpertList(words) {
       txt = x.options[x.selectedIndex].text;
       url = url + "&language=" + txt;
     }
-    if (window.sessionStorage.paperid != null && window.sessionStorage.paperid.match('-') != null) {
-      url = url + "&venue=" + window.sessionStorage.paperid.split('-')[0];
-    } else {
-      if (window.location.href.match('tkdd') != null || window.location.href.match('tkde') != null) {
-        url = url + "&venue=TKDD";
-      }
-    }
+    url = url + "&roster=" + document.getElementById("roster").value;
 
     $.get(url, function(data, status){
       statechange(data);

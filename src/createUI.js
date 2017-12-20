@@ -30,8 +30,11 @@ if (ismanuscript) {
     chrome.runtime.sendMessage("ok");
     docu_id = document.getElementsByName('XIK_DOCU_ID')[0].value;
     //alert(docu_id);
-    if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords != null){
-      document.getElementById('keywords').value = window.sessionStorage.keywords;
+    if (window.sessionStorage.keywords0 == null && window.sessionStorage.keywords != null) {
+      window.sessionStorage.keywords0 = window.sessionStorage.keywords;
+    }
+    if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords0 != null){
+      document.getElementById('keywords').value = window.sessionStorage.keywords0;
     } else {
       show = window.sessionStorage.show;
       window.sessionStorage.clear();
@@ -69,7 +72,7 @@ function createUI(show) {
     side.style.position = "absolute";
     //side.style.float = "right";
     toppos = window.pageYOffset + 10;
-    if (toppos < 160 && ismanuscript) { toppos = 160; }
+    if (toppos < 200 && ismanuscript) { toppos = 200; }
     side.style.top = String(toppos)+"px";
     x = document.getElementsByClassName("redesigndetailsontext")[0];
     if (x != null)
@@ -106,6 +109,17 @@ function createUI(show) {
   col.colSpan = "2"; col.align = "left"; col.style.background = "#FAE6BE";
   txt = document.createTextNode(" Reviewer Recommender");
   col.appendChild(txt);
+  journal = window.location.href.replace(/.*\.manuscriptcentral\.com\//, '').replace(/[\/\?].*/, '');
+  if (journal == "tkdd") {
+    txt = document.createTextNode(" for ");
+    col.appendChild(txt);
+    txt = document.createElement('span');
+    txt.appendChild(document.createTextNode("TKDD"));
+    txt.style.fontStyle = "italic";
+    txt.style.color = "#000066";
+    txt.style.textDecoration = "underline";
+    col.appendChild(txt);
+  }
   row.appendChild(col);
   img = document.createElement("img");
   img.src = chrome.extension.getURL("resource/close.png");
@@ -155,18 +169,20 @@ function createUI(show) {
   row = document.createElement('tr');
   col = document.createElement('td'); col.colSpan = "2";
   col.appendChild(document.createTextNode("Keywords (Seperated by \",\"):"));
-
-  img = document.createElement("img");
-  img.src = chrome.extension.getURL("resource/refresh.png");
-  img.style.height = "16px"; img.align = "right";
-  img.onclick = function(){
-    if (document.getElementById('keywords').value == sessionStorage.extractedKeywords)
+  img = document.createElement("input"); img.value = 0;
+  img.type = "image"; img.src = chrome.extension.getURL("resource/refresh.png");
+  img.style.height = "16px"; img.align = "right"; $(img).hide();
+  img.onclick = function() {
+    if (this.value == 1) {
       document.getElementById('keywords').value = sessionStorage.keywords;
-    else
+      this.value = 0;
+    } else {
       document.getElementById('keywords').value = sessionStorage.extractedKeywords;
+      this.value = 1;
+    }
   }
 
-  row.appendChild(col); row.appendChild(img); qtb.appendChild(row);
+  col.appendChild(img); row.appendChild(col); qtb.appendChild(row);
 
   row = document.createElement('tr');
   col = document.createElement('td'); col.colSpan = "2";
@@ -266,6 +282,33 @@ function createUI(show) {
   sub.style.marginTop = "4px"; sub.style.marginBottom = "4px"; //sub.style.marginRight = "4px";
   sub.align = "center"; sub.onclick = function(){ query();};
   col.appendChild(sub);
+
+  sel = document.createElement('select');
+  sel.style.marginLeft = "10px"; sel.style.width = "80px"; $(sel).hide();
+  sel.id = "roster";
+  opt = document.createElement('option'); opt.text = 'Default'; opt.value = ""; sel.add(opt, null);
+  col.appendChild(sel);
+
+  url = "https://raw.githubusercontent.com/thomas0809/ReviewerConfigure/master/journal.json"; 
+  $.get(url, function(data, status) {
+      var conf = JSON.parse(data);
+      var journal = window.location.href.replace(/.*\.manuscriptcentral\.com\//, '').replace(/[\/\?].*/, '');
+      //alert(journal);
+      if (!(journal in conf)) {
+        journal = "default";
+      }
+      sel = document.getElementById("roster");
+      sel.remove(0);
+      for (var i in conf[journal]['list']) {
+        var x = conf[journal]['list'][i];
+        var opt = document.createElement('option'); opt.text = x['name']; opt.value = x['id']; sel.add(opt, null);
+      }
+      sel.selectedIndex = conf[journal]['default'];
+      if (conf[journal]['option']) {
+        $(sel).show();
+      }
+  });
+
   /*sub = document.createElement("input");
   sub.type = "image"; sub.src = chrome.extension.getURL("resource/title.png");
   sub.style.width = "80px";

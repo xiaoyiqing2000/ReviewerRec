@@ -257,6 +257,8 @@ function sendDataToAminer(){
 function extractKeywords(){
   if (sessionStorage.abstract == null)
     return;
+  sessionStorage.removeItem("extractedKeywords");
+
   function saveKeywords(XMLHttpRequest, textStatus) {
     terms = XMLHttpRequest.responseJSON.terms;
     keywords = [];
@@ -264,10 +266,10 @@ function extractKeywords(){
       keywords.push(terms[i].t);
     }
     if (sessionStorage.extractedKeywords == null){
-      sessionStorage.extractedKeywords = keywords.join(",");
+      sessionStorage.extractedKeywords = keywords.join(", ");
     }
     else{
-      saved = sessionStorage.extractedKeywords.split(",");
+      saved = sessionStorage.extractedKeywords.split(", ");
       length = saved.length;
       for (var i in keywords){
         if (saved.indexOf(keywords[i]) == -1){
@@ -277,13 +279,13 @@ function extractKeywords(){
             saved.splice(i, 0, keywords[i])
         }
       }
-      sessionStorage.extractedKeywords = saved.join(",");
+      sessionStorage.extractedKeywords = saved.join(", ");
     }
   }
 
   var url = "https://loki.aminer.org/api/te";
   var data = {};
-  data.s = sessionStorage.abstract;
+  data.s = sessionStorage.title + sessionStorage.abstract;
   data.t = 2;
   data.n = 5;
 
@@ -294,9 +296,10 @@ function extractKeywords(){
     contentType : "application/json",
     complete : saveKeywords
   });
-
-  data.s = sessionStorage.keywords;
-  data.n = 2;
+/*
+  data.s = sessionStorage.abstract;
+  data.t = 2;
+  data.n = 4;
   $.ajax({
     type : "POST",
     url : url,
@@ -304,6 +307,7 @@ function extractKeywords(){
     contentType : "application/json",
     complete : saveKeywords
   });
+*/
 }
 
 

@@ -32,16 +32,16 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
 
 function exec(tab, show) {
   if (tab.url.match("manuscriptcentral.com") != null) {
-    chrome.tabs.executeScript(tab.id, {file: 'content.js', allFrames: true});
-    chrome.tabs.executeScript(tab.id, {file: 'scholarone.js', allFrames: true});
+    chrome.tabs.executeScript(tab.id, {file: 'libs/content.js', allFrames: true});
+    chrome.tabs.executeScript(tab.id, {file: 'libs/scholarone.js', allFrames: true});
   }
-  chrome.tabs.executeScript(tab.id, {file: 'jquery.min.js', allFrames: true});
-  chrome.tabs.executeScript(tab.id, {file: 'jquery.json.js', allFrames: true});
-  chrome.tabs.executeScript(tab.id, {file: 'jquery.soap.js', allFrames: true});
-  chrome.tabs.executeScript(tab.id, {file: 'queryAPI.js', allFrames: false}, function(){});
-  chrome.tabs.executeScript(tab.id, {file: 'analyze.js', allFrames: false}, function(){});
+  chrome.tabs.executeScript(tab.id, {file: 'libs/jquery.min.js', allFrames: true});
+  chrome.tabs.executeScript(tab.id, {file: 'libs/jquery.json.js', allFrames: true});
+  chrome.tabs.executeScript(tab.id, {file: 'libs/jquery.soap.js', allFrames: true});
+  chrome.tabs.executeScript(tab.id, {file: 'src/queryAPI.js', allFrames: false}, function(){});
+  chrome.tabs.executeScript(tab.id, {file: 'src/analyze.js', allFrames: false}, function(){});
 
-  chrome.tabs.executeScript(tab.id, {file: 'createUI.js', allFrames: false}, function(){
+  chrome.tabs.executeScript(tab.id, {file: 'src/createUI.js', allFrames: false}, function(){
     //if (show) chrome.tabs.executeScript(tab.id, {code: "$('#side').show();"});
   });
 }
