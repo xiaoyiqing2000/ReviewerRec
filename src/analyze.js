@@ -2,20 +2,20 @@
 // part 3 :    analyze
 //---------------------------------
 
-function analyze(){
+function analyze() {
 
-  setField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
-  setDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
+  setField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG', '');
+  setDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB', 'Tdetails', 'ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
 
   url = window.location.href;
   url = url.replace(/#.*/, "");
   url = url + "?" + $("form").serialize();
   info = ["type0"];
 
-  resetField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
-  resetDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
+  resetField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG', '');
+  resetDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB', 'Tdetails', 'ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
 
-  $.get(url, function(data, status) {
+  $.get(url, function (data, status) {
     parser = new DOMParser();
     doc = parser.parseFromString(data, "text/html");
 
@@ -23,29 +23,39 @@ function analyze(){
     var left = [].slice.apply(table.getElementsByClassName("alternatetablecolor"));
     var right = [].slice.apply(table.getElementsByClassName("tablelightcolor"));
 
-    for (var i in left){
+    for (var i in left) {
       lefttext = left[i].innerText;
+      /*
+      3.0.4 code
       righttext = right[i].innerText;
+      */
+      //3.0.5
+      try {
+        righttext = right[i].innerText;
+      } catch {
+        //alert(i + "no innerText");//debug
+      }
+      //3.0.5
       if (lefttext == "Title:")
         info.push(righttext);
-      if (lefttext.match("Authors") != null){
+      if (lefttext.match("Authors") != null) {
         authorfinished = 0;
         pagecontents = [].slice.apply(right[i].getElementsByClassName("pagecontents"));
         authorsname = [];
         authorlist = [];
         var j = 0;
-        while(j < pagecontents.length){
+        while (j < pagecontents.length) {
           author = {}
           name = pagecontents[j].innerText.trim();
           name = name.replace(',', '').trim();
           authorsname.push(name);
           a = pagecontents[j].getElementsByTagName('a')[0];
-          if (a == null || a.href.match("javascript:popWindow") == null){
+          if (a == null || a.href.match("javascript:popWindow") == null) {
             j += 1;
             continue;
           }
           j += 1;
-          while(pagecontents[j].getElementsByTagName('a')[0] != null)
+          while (pagecontents[j].getElementsByTagName('a')[0] != null)
             j += 1;
           affiliation = pagecontents[j].innerText.trim();
           author.name = name;
@@ -56,15 +66,17 @@ function analyze(){
           host = window.location.host;
           url = host + "/" + str;
 
-          (function(url, length){
-            $.get(url, function(data, status){ getAuthorEmail(length-1, data); });
+          (function (url, length) {
+            $.get(url, function (data, status) {
+              getAuthorEmail(length - 1, data);
+            });
           })(url, authorlist.length);
 
           j += 1;
         }
         info.push(authorsname.join(", "));
       }
-      if(lefttext.match("Keyword") != null){
+      if (lefttext.match("Keyword") != null) {
         info.push(righttext);
       }
     }
@@ -81,7 +93,7 @@ function analyze(){
         text = text.replace("javascript:popWindow(\'", "");
         text = text.replace(/','ms_preview'(\s|\S)*$/, "");
         text = window.location.host + text;
-        $.get(text, function(data, status){
+        $.get(text, function (data, status) {
           var parser = new DOMParser();
           var doc = parser.parseFromString(data, "text/html");
           var str = doc.getElementsByClassName("pagecontents")[1].textContent;
@@ -106,7 +118,7 @@ function analyze(){
     nwords = nwords.replace(/^,\s*/g, '');
     //document.getElementById('keywords').value = nwords;
     //document.getElementById('abstract').value = info[4];
-    if (window.sessionStorage.keywords == undefined){
+    if (window.sessionStorage.keywords == undefined) {
       window.sessionStorage.title = info[1];
       window.sessionStorage.authorsname = info[2];
       window.sessionStorage.keywords = nwords;
@@ -126,7 +138,7 @@ function analyze(){
 
 
 
-function getReviewerInfo(){
+function getReviewerInfo() {
   list = $(".pagecontents");
   for (var i in list) {
     if (list[i].getElementsByTagName("b").length > 0) {
@@ -139,10 +151,12 @@ function getReviewerInfo(){
   reviewerfinished = 0;
   for (var i = 0; i < list.length; i++) {
     if (list[i].getElementsByTagName("b").length > 0 && list[i].textContent.match("Reviewer List") != null) {
-      flag = true; continue;
+      flag = true;
+      continue;
     }
     if (list[i].getElementsByTagName("b").length > 0 && list[i].textContent.match("Alternates") != null) {
-      flag = false; break;
+      flag = false;
+      break;
     }
     if (flag == true && list[i].innerHTML.match("mailpopup") != null) {
       reviewer = {}
@@ -152,7 +166,7 @@ function getReviewerInfo(){
       reviewer.name = reviewer.name.replace('recommended', '').trim();
       // console.log(reviewer.name);
       x = list[i];
-      while (x.className != "tablelightcolor"){
+      while (x.className != "tablelightcolor") {
         x = x.parentNode;
       }
       x = $($(x).next()).get(0);
@@ -167,35 +181,76 @@ function getReviewerInfo(){
       str = list[i].innerHTML.replace(/[\s\S]*javascript\:popWindow\(\'/, "");
       str = str.replace(/'[\s\S]*/g, "");
       url = host + "/" + str;
-      if (reviewerlist.length == 1) $.get(url, function(data, status){ getReviewerEmail(0, data); });
-      if (reviewerlist.length == 2) $.get(url, function(data, status){ getReviewerEmail(1, data); });
-      if (reviewerlist.length == 3) $.get(url, function(data, status){ getReviewerEmail(2, data); });
-      if (reviewerlist.length == 4) $.get(url, function(data, status){ getReviewerEmail(3, data); });
-      if (reviewerlist.length == 5) $.get(url, function(data, status){ getReviewerEmail(4, data); });
-      if (reviewerlist.length == 6) $.get(url, function(data, status){ getReviewerEmail(5, data); });
-      if (reviewerlist.length == 7) $.get(url, function(data, status){ getReviewerEmail(6, data); });
-      if (reviewerlist.length == 8) $.get(url, function(data, status){ getReviewerEmail(7, data); });
-      if (reviewerlist.length == 9) $.get(url, function(data, status){ getReviewerEmail(8, data); });
-      if (reviewerlist.length == 10) $.get(url, function(data, status){ getReviewerEmail(9, data); });
-      if (reviewerlist.length == 11) $.get(url, function(data, status){ getReviewerEmail(10, data); });
-      if (reviewerlist.length == 12) $.get(url, function(data, status){ getReviewerEmail(11, data); });
-      if (reviewerlist.length == 13) $.get(url, function(data, status){ getReviewerEmail(12, data); });
-      if (reviewerlist.length == 14) $.get(url, function(data, status){ getReviewerEmail(13, data); });
-      if (reviewerlist.length == 15) $.get(url, function(data, status){ getReviewerEmail(14, data); });
-      if (reviewerlist.length == 16) $.get(url, function(data, status){ getReviewerEmail(15, data); });
-      if (reviewerlist.length == 17) $.get(url, function(data, status){ getReviewerEmail(16, data); });
-      if (reviewerlist.length == 18) $.get(url, function(data, status){ getReviewerEmail(17, data); });
-      if (reviewerlist.length == 19) $.get(url, function(data, status){ getReviewerEmail(18, data); });
-      if (reviewerlist.length == 20) $.get(url, function(data, status){ getReviewerEmail(19, data); });
+      if (reviewerlist.length == 1) $.get(url, function (data, status) {
+        getReviewerEmail(0, data);
+      });
+      if (reviewerlist.length == 2) $.get(url, function (data, status) {
+        getReviewerEmail(1, data);
+      });
+      if (reviewerlist.length == 3) $.get(url, function (data, status) {
+        getReviewerEmail(2, data);
+      });
+      if (reviewerlist.length == 4) $.get(url, function (data, status) {
+        getReviewerEmail(3, data);
+      });
+      if (reviewerlist.length == 5) $.get(url, function (data, status) {
+        getReviewerEmail(4, data);
+      });
+      if (reviewerlist.length == 6) $.get(url, function (data, status) {
+        getReviewerEmail(5, data);
+      });
+      if (reviewerlist.length == 7) $.get(url, function (data, status) {
+        getReviewerEmail(6, data);
+      });
+      if (reviewerlist.length == 8) $.get(url, function (data, status) {
+        getReviewerEmail(7, data);
+      });
+      if (reviewerlist.length == 9) $.get(url, function (data, status) {
+        getReviewerEmail(8, data);
+      });
+      if (reviewerlist.length == 10) $.get(url, function (data, status) {
+        getReviewerEmail(9, data);
+      });
+      if (reviewerlist.length == 11) $.get(url, function (data, status) {
+        getReviewerEmail(10, data);
+      });
+      if (reviewerlist.length == 12) $.get(url, function (data, status) {
+        getReviewerEmail(11, data);
+      });
+      if (reviewerlist.length == 13) $.get(url, function (data, status) {
+        getReviewerEmail(12, data);
+      });
+      if (reviewerlist.length == 14) $.get(url, function (data, status) {
+        getReviewerEmail(13, data);
+      });
+      if (reviewerlist.length == 15) $.get(url, function (data, status) {
+        getReviewerEmail(14, data);
+      });
+      if (reviewerlist.length == 16) $.get(url, function (data, status) {
+        getReviewerEmail(15, data);
+      });
+      if (reviewerlist.length == 17) $.get(url, function (data, status) {
+        getReviewerEmail(16, data);
+      });
+      if (reviewerlist.length == 18) $.get(url, function (data, status) {
+        getReviewerEmail(17, data);
+      });
+      if (reviewerlist.length == 19) $.get(url, function (data, status) {
+        getReviewerEmail(18, data);
+      });
+      if (reviewerlist.length == 20) $.get(url, function (data, status) {
+        getReviewerEmail(19, data);
+      });
     }
   }
 }
 
-function getAuthorEmail(id, data){
+
+function getAuthorEmail(id, data) {
   var parser = new DOMParser();
   var doc = parser.parseFromString(data, "text/html");
   var str = doc.getElementsByName("mainemailwindow")[0].getAttribute("src");
-  $.get(str, function(data, status){
+  $.get(str, function (data, status) {
     var parser = new DOMParser();
     var doc = parser.parseFromString(data, "text/html");
     var str = doc.getElementsByName("EMAIL_TEMPLATE_TO")[0].value;
@@ -209,11 +264,11 @@ function getAuthorEmail(id, data){
   });
 }
 
-function getReviewerEmail(id, data){
+function getReviewerEmail(id, data) {
   var parser = new DOMParser();
   var doc = parser.parseFromString(data, "text/html");
   var str = doc.getElementsByName("mainemailwindow")[0].getAttribute("src");
-  $.get(str, function(data, status){
+  $.get(str, function (data, status) {
     var parser = new DOMParser();
     var doc = parser.parseFromString(data, "text/html");
     var str = doc.getElementsByName("EMAIL_TEMPLATE_TO")[0].value;
@@ -227,34 +282,34 @@ function getReviewerEmail(id, data){
   });
 }
 
-function sendDataToAminer(){
+function sendDataToAminer() {
   if (reviewerlist.length == 0) return;
   window.sessionStorage.reviewers = JSON.stringify(reviewerlist);
   window.sessionStorage.authors = JSON.stringify(authorlist);
   //btn = document.createElement('button');
   //btn.appendChild(document.createTextNode("post"));
   //btn.onclick = function(){
-    var url = "https://api.aminer.org/api/reviewer/add";
-    var data = {};
-    data.paperid = window.sessionStorage.paperid;
-    data.title = window.sessionStorage.title;
-    data.keywords = window.sessionStorage.keywords;
-    data.abstract = window.sessionStorage.abstract;
-    data.date = window.sessionStorage.date;
-    data.authors = authorlist;
-    data.reviewers = reviewerlist;
-    $.ajax({
-      type : "POST",
-      url : url,
-      data : $.toJSON(data),
-      contentType : "application/json"
-    });
+  var url = "https://api.aminer.org/api/reviewer/add";
+  var data = {};
+  data.paperid = window.sessionStorage.paperid;
+  data.title = window.sessionStorage.title;
+  data.keywords = window.sessionStorage.keywords;
+  data.abstract = window.sessionStorage.abstract;
+  data.date = window.sessionStorage.date;
+  data.authors = authorlist;
+  data.reviewers = reviewerlist;
+  $.ajax({
+    type: "POST",
+    url: url,
+    data: $.toJSON(data),
+    contentType: "application/json"
+  });
   //}
   //document.body.appendChild(btn);
   //$(btn).click();
 }
 
-function extractKeywords(){
+function extractKeywords() {
   if (sessionStorage.abstract == null)
     return;
   sessionStorage.removeItem("extractedKeywords");
@@ -262,19 +317,18 @@ function extractKeywords(){
   function saveKeywords(XMLHttpRequest, textStatus) {
     terms = XMLHttpRequest.responseJSON.terms;
     keywords = [];
-    for (var i in terms){
+    for (var i in terms) {
       keywords.push(terms[i].t);
     }
-    if (sessionStorage.extractedKeywords == null){
+    if (sessionStorage.extractedKeywords == null) {
       sessionStorage.extractedKeywords = keywords.join(", ");
-    }
-    else{
+    } else {
       saved = sessionStorage.extractedKeywords.split(", ");
       length = saved.length;
-      for (var i in keywords){
-        if (saved.indexOf(keywords[i]) == -1){
+      for (var i in keywords) {
+        if (saved.indexOf(keywords[i]) == -1) {
           if (length >= 5)
-            saved.splice(length+i, 0, keywords[i])
+            saved.splice(length + i, 0, keywords[i])
           else
             saved.splice(i, 0, keywords[i])
         }
@@ -290,24 +344,22 @@ function extractKeywords(){
   data.n = 5;
 
   $.ajax({
-    type : "POST",
-    url : url,
-    data : $.toJSON(data),
-    contentType : "application/json",
-    complete : saveKeywords
+    type: "POST",
+    url: url,
+    data: $.toJSON(data),
+    contentType: "application/json",
+    complete: saveKeywords
   });
-/*
-  data.s = sessionStorage.abstract;
-  data.t = 2;
-  data.n = 4;
-  $.ajax({
-    type : "POST",
-    url : url,
-    data : $.toJSON(data),
-    contentType : "application/json",
-    complete : saveKeywords
-  });
-*/
+  /*
+    data.s = sessionStorage.abstract;
+    data.t = 2;
+    data.n = 4;
+    $.ajax({
+      type : "POST",
+      url : url,
+      data : $.toJSON(data),
+      contentType : "application/json",
+      complete : saveKeywords
+    });
+  */
 }
-
-
