@@ -30,15 +30,24 @@ function analyze(){
       righttext = right[i].innerText;
       */
       //3.0.5
+      var validRighttext = true;
       try {
         righttext = right[i].innerText;
       } catch {
+        validRighttext = false;
         //alert(i + "no innerText");//debug
       }
       //3.0.5
-      if (lefttext == "Title:")
+      if (lefttext == "Title:" && validRighttext) //3.0.5 validRighttext
         info.push(righttext);
       if (lefttext.match("Authors") != null){
+        //3.0.5
+        try {
+          if (authorlist.length != 0) continue;
+        } catch {
+          
+        }
+        //3.0.5
         authorfinished = 0;
         pagecontents = [].slice.apply(right[i].getElementsByClassName("pagecontents"));
         authorsname = [];
@@ -74,10 +83,14 @@ function analyze(){
         }
         info.push(authorsname.join(", "));
       }
-      if(lefttext.match("Keyword") != null){
+      if(lefttext.match("Keyword") != null && validRighttext){  //3.0.5 validRighttext
         info.push(righttext);
       }
     }
+
+    //3.0.5
+    addAuthors2Reviewerlist();
+    //3.0.5
 
     // console.log(info);
     // console.log(authorlist);
@@ -134,7 +147,20 @@ function analyze(){
 
 
 
+//3.0.5
 
+function addAuthors2Reviewerlist() {
+  for(var i in authorlist)
+  {
+    //search AMiner
+    var curAuthor = authorlist[i];
+    var curAuthorName=curAuthor.name;
+    var curAuthorAffiliation=curAuthor.affiliation;
+    var url = "https://api.aminer.org/api/reviewer/search?query="+curAuthorName+"&size=100";
+  }
+  
+}
+//3.0.5
 
 function getReviewerInfo(){
   list = $(".pagecontents");

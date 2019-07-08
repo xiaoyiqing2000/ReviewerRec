@@ -11,3 +11,4 @@ Notable changes of Reviewer Recommender after version 3.0.4 will be documented i
   If the email address got from AMiner is illegal, it won't be filled. And an alert will be displayed.
 
 - Fix the bug of failing to analyze keywords. (analyze.js)
+- fix the bug of failing to create author list. (analyze.js)
