@@ -3,7 +3,9 @@
 //---------------------------------
 
 function analyze(){
-
+  //3.0.5
+  //updateKeywords(); //activate when needed. since js cant output to local files, src/tkdeKeywords.txt need to be changed manually
+  //3.0.5
   setField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
   setDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
 
@@ -88,9 +90,6 @@ function analyze(){
       }
     }
 
-    //3.0.5
-    addAuthors2Reviewerlist();
-    //3.0.5
 
     // console.log(info);
     // console.log(authorlist);
@@ -148,17 +147,160 @@ function analyze(){
 
 
 //3.0.5
+//todo
+/*
+function updateKeywords() {
+  //update Keywords (activated when needed)
+  url = "https://api.aminer.cn/api/search/person/advanced?name=jie+tang&org=Tsinghua+University&size=20&sort=relevance&term=";
+  var keywordsCount = [];
+  $.get(url, function (data) {
+    for (var i in data.result) {
+      var curReviewerTags = data.result[i].tags;
+      for (var j in curReviewerTags) {
+        //find if tag in array then ++ or push
+        curTag = curReviewerTags[j];
+        var findFlag = false;
+        for (var k in keywordsCount) {
+          if (curTag == keywordsCount[k].name) {
+            keywordsCount[k].counts++;
+            findFlag = true;
+          }
+        }
+        if (!findFlag) {
+          var keyword = {};
+          keyword.name = curTag;
+          keyword.counts = i; //to change
+          keywordsCount.push(keyword);
+        }
+      }
+    }
+    //bubble sort descend
+    for (var i in keywordsCount) {
+      for (var j = i; j in keywordsCount; j++) {
+        if (keywordsCount[j].counts > keywordsCount[i].counts) {
+          var tmp = keywordsCount[j];
+          keywordsCount[j] = keywordsCount[i];
+          keywordsCount[i] = tmp;
+        }
+      }
+    }
+    //output
+    for (var i = 0; i < 100; i++) {
+      console.log(keywordsCount[i].name);
+      console.log("~");
+    }
+  })
+}
+*/
 
-function addAuthors2Reviewerlist() {
-  for(var i in authorlist)
-  {
-    //search AMiner
-    var curAuthor = authorlist[i];
-    var curAuthorName=curAuthor.name;
-    var curAuthorAffiliation=curAuthor.affiliation;
-    var url = "https://api.aminer.org/api/reviewer/search?query="+curAuthorName+"&size=100";
+// test simlarity with Levenshtein distance  copyrighy https://stackoverflow.com/questions/10473745/compare-strings-javascript-return-of-likely
+function editDistance(s1, s2) {
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+
+  var costs = new Array();
+  for (var i = 0; i <= s1.length; i++) {
+    var lastValue = i;
+    for (var j = 0; j <= s2.length; j++) {
+      if (i == 0)
+        costs[j] = j;
+      else {
+        if (j > 0) {
+          var newValue = costs[j - 1];
+          if (s1.charAt(i - 1) != s2.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue, lastValue),
+              costs[j]) + 1;
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    if (i > 0)
+      costs[s2.length] = lastValue;
   }
-  
+  return costs[s2.length];
+}
+
+function similarity(s1, s2) {
+  var longer = s1;
+  var shorter = s2;
+  if (s1.length < s2.length) {
+    longer = s2;
+    shorter = s1;
+  }
+  var longerLength = longer.length;
+  if (longerLength == 0) {
+    return 1.0;
+  }
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+}
+
+function addOneScholarReviewerRoster(name, affiliation, email) {
+  //find scholar and judge h-index >= 5
+  //test tkde keywords
+  tkde = ["knowledge", "data", "engineering", "expert", "systems", "knowledge", "data", "engineering", "artificial", "intelligence", "management", "distributed", "knowledge", "base", "database", "processing", "real-time", "knowledge", "bases", "database", "architecture", "knowledge", "data", "systems", "data", "management", "database", "modeling", "query", "implementation", "languages", "integrity", "security", "tolerance", "control", "distributed", "database", "statistical", "performance", "evaluation", "mining", "information", "retrieval", "machine", "learning"]
+  var reName = name.replace(/ /g, "+");
+  var reAffi = affiliation.replace(/ /g, "+");
+  //cut affiliation with "-" or ","
+  reAffi = reAffi.split("-")[0];
+  reAffi = reAffi.split(",")[0];
+  url = "https://api.aminer.cn/api/search/person/advanced?name=" + reName + "&org=" + reAffi + "&size=10&sort=relevance&term=";
+  $.get(url, function (data) {
+    for (var i in data.result) {
+      var curScholar = data.result[i];
+      //h-index test
+      if (curScholar.indices.h_index <= 5) continue;
+      //keywords similarity
+      //get all tags splited to words
+      var overallSimilarity = [];
+      var curScholarTags = [];
+      for (var j in curScholar.tags) {
+        var curtag = curScholar.tags[j].t;
+        curtag = curtag.toLowerCase();
+        curScholarTags = curScholarTags.concat(curtag.split(" "));
+      }
+      //similarity algorithm 1 : Levenshtein distance of each word
+      /*
+      for(var j in curScholarTags)
+      {
+        var maxSim=0;
+        for(var k in tkde)
+        { 
+          var curSim=similarity(curScholarTags[j],tkde[k]);
+          if(curSim>maxSim) maxSim=curSim;
+          if(k==44) overallSimilarity.push(maxSim); //to change
+        }
+      }
+      */
+      //similarity algorithm 2 : Levenshtein simlarity >=0.8 will be set as 1, otherwise 0
+      for (var j in curScholarTags) {
+        var maxSim = 0;
+        for (var k in tkde) {
+          var curSim = similarity(curScholarTags[j], tkde[k]);
+          if (curSim < 0.8) curSim = 0;
+          else curSim = 1
+          if (curSim > maxSim) maxSim = curSim;
+          if (k == 44) overallSimilarity.push(maxSim); //to change
+        }
+      }
+      //cal av and sum
+      var sumSim = 0;
+      for (var j in overallSimilarity) {
+        sumSim += overallSimilarity[j];
+      }
+      var averageSim = sumSim / overallSimilarity.length;
+      if (averageSim >= 0.15) {
+        var tagsstr = "";
+        for (var j in curScholar.tags) {
+          tagsstr += curScholar.tags[j].t;
+          tagsstr += ", ";
+        }
+        str = curScholar.name + "\n" + curScholar.aff.desc + "\n" + tagsstr + "\n";
+        alert(str);
+      }
+    }
+  })
+  //add scholar into reviewer roster
 }
 //3.0.5
 
@@ -173,6 +315,9 @@ function getReviewerInfo(){
   flag = false;
   reviewerlist = [];
   reviewerfinished = 0;
+  //3.0.5
+  reviewerAffiliation = [];
+  //3.0.5
   for (var i = 0; i < list.length; i++) {
     if (list[i].getElementsByTagName("b").length > 0 && list[i].textContent.match("Reviewer List") != null) {
       flag = true; continue;
@@ -187,6 +332,20 @@ function getReviewerInfo(){
       // console.log(type(reviewer.name));
       reviewer.name = reviewer.name.replace('recommended', '').trim();
       // console.log(reviewer.name);
+
+      //3.0.5 get reviewer affiliation
+      //note: Because "reviewerlist" will be sent to Aminer, for now we don't add affiliation to reviewer's property.
+      //for list[i+1], the content may be affiliation, orcid or status. in the former 2 cases, the innerHTML end with <br>
+      var tmpText = list[i + 1].innerHTML;
+      if (tmpText.match("orcid") == null && tmpText.match("<br>") != null) {
+        tmpText = tmpText.replace("<br>", "");
+        reviewerAffiliation.push(tmpText);
+        //alert(tmpText); //debug
+      } else {
+        reviewerAffiliation.push("");
+      }
+      //3.0.5
+
       x = list[i];
       while (x.className != "tablelightcolor"){
         x = x.parentNode;
@@ -242,6 +401,9 @@ function getAuthorEmail(id, data){
     if (getAbstract && reviewerfinished == reviewerlist.length && authorfinished == authorlist.length) {
       sendDataToAminer();
     }
+    //3.0.5 add scholar when all data got
+    addOneScholarReviewerRoster(authorlist[id].name, authorlist[id].affiliation, authorlist[id].email);
+    //3.0.5
   });
 }
 
@@ -260,6 +422,9 @@ function getReviewerEmail(id, data){
     if (getAbstract && reviewerfinished == reviewerlist.length && authorfinished == authorlist.length) {
       sendDataToAminer();
     }
+    //3.0.5 add scholar when all data got
+    addOneScholarReviewerRoster(reviewerlist[id].name, reviewerAffiliation[id], reviewerlist[id].email);
+    //3.0.5
   });
 }
 
