@@ -297,6 +297,7 @@ function addOneScholarReviewerRoster(name, affiliation, email) {
         }
         str = curScholar.name + "\n" + curScholar.aff.desc + "\n" + tagsstr + "\n";
         alert(str);
+        console.log(str);
       }
     }
   })
