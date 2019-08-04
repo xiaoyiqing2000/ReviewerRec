@@ -146,22 +146,23 @@ function analyze(){
 
 
 
+
 //3.0.5
-//todo
+//update Keywords (activated when needed)
 /*
 function updateKeywords() {
-  //update Keywords (activated when needed)
-  url = "https://api.aminer.cn/api/search/person/advanced?name=jie+tang&org=Tsinghua+University&size=20&sort=relevance&term=";
-  var keywordsCount = [];
-  $.get(url, function (data) {
+  keywordsCount = [];
+
+  function countKeywords(data) {
     for (var i in data.result) {
       var curReviewerTags = data.result[i].tags;
       for (var j in curReviewerTags) {
         //find if tag in array then ++ or push
-        curTag = curReviewerTags[j];
+        curTag = curReviewerTags[j].t.toLowerCase();
         var findFlag = false;
+        //change alg: if Levenshtein distance similarity > 0.9 deem as same words
         for (var k in keywordsCount) {
-          if (curTag == keywordsCount[k].name) {
+          if (similarity(curTag, keywordsCount[k].name) > 0.9) {
             keywordsCount[k].counts++;
             findFlag = true;
           }
@@ -169,11 +170,51 @@ function updateKeywords() {
         if (!findFlag) {
           var keyword = {};
           keyword.name = curTag;
-          keyword.counts = i; //to change
+          keyword.counts = 1;
           keywordsCount.push(keyword);
         }
       }
     }
+  }
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/0/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/100/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/200/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/300/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/400/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/500/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/600/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/700/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/800/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
+  })
+  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/900/size/3000";
+  $.get(url, function (data) {
+    countKeywords(data);
     //bubble sort descend
     for (var i in keywordsCount) {
       for (var j = i; j in keywordsCount; j++) {
@@ -185,14 +226,14 @@ function updateKeywords() {
       }
     }
     //output
+    str = "";
     for (var i = 0; i < 100; i++) {
-      console.log(keywordsCount[i].name);
-      console.log("~");
+      str += "\"" + keywordsCount[i].name + "\", ";
     }
+    console.log(str);
   })
 }
 */
-
 // test simlarity with Levenshtein distance  copyrighy https://stackoverflow.com/questions/10473745/compare-strings-javascript-return-of-likely
 function editDistance(s1, s2) {
   s1 = s1.toLowerCase();
@@ -238,8 +279,9 @@ function similarity(s1, s2) {
 function addOneScholarReviewerRoster(name, affiliation, email) {
   //find scholar and judge h-index >= 5
   //test tkde keywords
-  tkde = ["knowledge", "data", "engineering", "expert", "systems", "knowledge", "data", "engineering", "artificial", "intelligence", "management", "distributed", "knowledge", "base", "database", "processing", "real-time", "knowledge", "bases", "database", "architecture", "knowledge", "data", "systems", "data", "management", "database", "modeling", "query", "implementation", "languages", "integrity", "security", "tolerance", "control", "distributed", "database", "statistical", "performance", "evaluation", "mining", "information", "retrieval", "machine", "learning"]
+  var tkde = ["data mining", "machine learning", "information retrieval", "social network", "computer science", "database system", "support vector machine", "relational databases", "query processing", "knowledge discovery", "learning artificial intelligence", "search engine", "data analysis", "neural networks", "indexation", "recommender systems", "feature extraction", "wireless sensor network", "data models", "sensor network", "internet", "decision tree", "web services", "image retrieval", "semantic web", "information extraction", "feature selection", "distributed database", "algorithms", "query optimization", "association rule", "bioinformatics", "spatial databases", "data management", "neural-network", "artificial intelligence", "data structures", "supervised learning", "data stream", "privacy", "indexes", "satisfiability", "computational complexity", "data privacy", "expert system", "query languages", "xml", "classification", "genetic algorithm", "collaborative filtering", "world wide web", "similarity search", "bayesian networks", "distributed systems", "web page", "indexing", "knowledge base", "data warehouses", "information system", "time series", "xml document", "pattern recognition", "graphical model", "clustering", "index", "probabilistic model", "social media", "real time", "web pages", "clustering algorithm", "anomaly detection", "text mining", "image segmentation", "cloud computing", "p2p", "mixture model", "gene expression", "parallel processing", "approximation algorithm", "location based service", "security", "hidden markov model", "databases", "nearest neighbor", "wireless network", "access control", "temporal databases", "data integration", "parallel algorithms", "concurrency control", "data visualization", "data integrity", "natural language processing", "outlier detection", "mobile computing", "document clustering", "ad hoc network", "natural languages", "image classification", "graph theory"];
   var reName = name.replace(/ /g, "+");
+  reName = reName.split("(")[0];
   var reAffi = affiliation.replace(/ /g, "+");
   //cut affiliation with "-" or ","
   reAffi = reAffi.split("-")[0];
@@ -257,51 +299,96 @@ function addOneScholarReviewerRoster(name, affiliation, email) {
       for (var j in curScholar.tags) {
         var curtag = curScholar.tags[j].t;
         curtag = curtag.toLowerCase();
-        curScholarTags = curScholarTags.concat(curtag.split(" "));
+        curScholarTags = curScholarTags.concat(curtag);
       }
       //similarity algorithm 1 : Levenshtein distance of each word
-      /*
-      for(var j in curScholarTags)
-      {
-        var maxSim=0;
-        for(var k in tkde)
-        { 
-          var curSim=similarity(curScholarTags[j],tkde[k]);
-          if(curSim>maxSim) maxSim=curSim;
-          if(k==44) overallSimilarity.push(maxSim); //to change
+      for (var j in curScholarTags) {
+        var maxSim = 0;
+        for (var k in tkde) {
+          var curSim = similarity(curScholarTags[j], tkde[k]);
+          if (curSim > maxSim) maxSim = curSim;
+          if (k == 99) overallSimilarity.push(maxSim);
         }
       }
-      */
       //similarity algorithm 2 : Levenshtein simlarity >=0.8 will be set as 1, otherwise 0
+      /*
       for (var j in curScholarTags) {
         var maxSim = 0;
         for (var k in tkde) {
           var curSim = similarity(curScholarTags[j], tkde[k]);
           if (curSim < 0.8) curSim = 0;
-          else curSim = 1
-          if (curSim > maxSim) maxSim = curSim;
-          if (k == 44) overallSimilarity.push(maxSim); //to change
+          else {
+            curSim = 1
+            overallSimilarity.push(curSim);
+            break;
+          }
+          if (k == 99) {
+            overallSimilarity.push(curSim);
+          }
         }
       }
+      */
       //cal av and sum
       var sumSim = 0;
       for (var j in overallSimilarity) {
         sumSim += overallSimilarity[j];
       }
       var averageSim = sumSim / overallSimilarity.length;
-      if (averageSim >= 0.15) {
+      url = "https://apiv2.aminer.cn/magic";
+      var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyLXZTT05LV0VzelBjVTY0QzlVTnJzdk9cL1ZQYndteFNBUTVMNkNnSmJOcGZNZFhSYkNEZURuSUFRcWRcL3poemhlTkZXSWIrZGJMTDZwOFV1cVwvdXpMc0pxbUtjY0t6YkdvK0ZqNzlKMEI5eHc9PSIsInVpZCI6IjU0ZjUxMTJlNDVjZTFiYzZkNTYzYjhkOSIsInNyYyI6ImFtaW5lciIsInJvbGVzIjpbInJvb3QiLCJyb3N0ZXJfZWRpdG9yIiwidGVzdHJvbGUiXSwiaXNzIjoiYXBpLmFtaW5lci5vcmciLCJleHAiOjE1NjcwNTk0NzcsImlhdCI6MTU2NDQ2NzQ3NywianRpIjoiZjc3YzczMDRjMzVhYWNiOTRiYjI1NDQwM2UzMjg3MzZiZDE2YzA4YTBjNjkzZjI1NGI0OTBkY2I0NGEzZmU4MjdjNTMwMDdkZWU3ZDdkYTRkYzAyODYwNDk3NmY1MjcxNWM4OGYxMDMxMjkyZWNmOGRiMzFhODI0MDIwNzFmNGUyM2UzNjFiMmEzMzQzOGZiNmRiN2FmODlmNTEyYjlhNjQ5ODlhY2QxYjc2MDRiZDY1Mjc2YmYwNTA5ZDY1ZmJhNTFlY2QxNjEyMGJmODYyMGQ2NzRmZjFlN2I3OTVhODM4ZjMwMzg2M2EyODNlN2MzNjc4N2QyMDY2YjM5MTViMyIsImVtYWlsIjoiaGRfeWFuZ3ltQHNpbmEuY29tIn0.9FNPSDdHOZG9Ek8v2M2yxT1bdoiwKU_FvbYi_UGZSbc";
+      if (averageSim >= 0.6) {
+        var id = curScholar.id;
+        //add to candidate. roster id is "5d42844e7390bff0dbf05b14"
+        $.ajax({
+          url: url,
+          type: "POST",
+          headers: {
+            "Authorization": token
+          },
+          data: JSON.stringify([{
+            "action": "person_eb.alter",
+            "parameters": {
+              "opts": [{
+                "aid": id,
+                "eid": "5d42844e7390bff0dbf05b14",
+                "opt": "add"
+              }]
+            }
+          }]),
+          success: function (data) {
+            //console.log(data);
+          }
+        })
         var tagsstr = "";
         for (var j in curScholar.tags) {
           tagsstr += curScholar.tags[j].t;
           tagsstr += ", ";
         }
-        str = curScholar.name + "\n" + curScholar.aff.desc + "\n" + tagsstr + "\n";
-        alert(str);
-        console.log(str);
+        str = curScholar.id + "\n" + curScholar.name + "\n" + curScholar.aff.desc + "\n" + curScholar.indices.h_index + "\n" + tagsstr + "\n" + averageSim;
+        //alert(str);
+        //console.log(str);
+        //add tracking (AMiner log)
+        $.ajax({
+          type: "POST",
+          url: url,
+          headers: {
+            "Authorization": token
+          },
+          data: JSON.stringify([{
+            "action": "tracking.Track",
+            "parameters": {
+              "data": [{
+                "type": "ReviewerRec",
+                "target_type": "TKDE Add to Candidate",
+                "payload": str
+              }]
+            }
+          }]),
+          //success: function(data){console.log(data);}
+        })
       }
     }
   })
-  //add scholar into reviewer roster
 }
 //3.0.5
 
