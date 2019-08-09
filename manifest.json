@@ -1,12 +1,12 @@
 {
-  "name": "Reviewer Recommender",
-  "description": "Reviewer Recommender",
-  "version": "3.0.5",
+  "name": "审稿人推荐系统",
+  "description": "Reviewer Recommender for Magtech",
+  "version": "1.0.0",
   "permissions": [
     "activeTab", "downloads", "<all_urls>", "tabs", "storage"
   ],
   "browser_action": {
-    "default_title": "Reviewer Recommender",
+    "default_title": "审稿人推荐系统",
     "default_icon": "resource/icon.png"
   },
   "web_accessible_resources": [

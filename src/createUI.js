@@ -1,12 +1,11 @@
 
 url = window.location.href;
 ismanuscript = false;
-if (url.match("manuscriptcentral.com") != null)
+if (url.match("http://jpmed.qdu.edu.cn/Journalx_jzyx/manuscript") != null)
   ismanuscript = true;
 
 isreviewing = false;
-x = document.getElementsByClassName("redesigndetailsontext")[0];
-if (x != null)
+if (url.match("Manuscript!view") != null)
   isreviewing = true;
 
 txt = $.ajax({url:chrome.extension.getURL("resource/scis.txt"), async : false}).responseText;
@@ -28,20 +27,21 @@ if (ismanuscript) {
     window.sessionStorage.clear();
   } else {
     chrome.runtime.sendMessage("ok");
-    docu_id = document.getElementsByName('XIK_DOCU_ID')[0].value;
+    //todo
+    //docu_id = document.getElementsByName('XIK_DOCU_ID')[0].value;
     //alert(docu_id);
     if (window.sessionStorage.keywords0 == null && window.sessionStorage.keywords != null) {
       window.sessionStorage.keywords0 = window.sessionStorage.keywords;
     }
-    if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords0 != null){
-      document.getElementById('keywords').value = window.sessionStorage.keywords0;
-    } else {
+    //if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords0 != null){
+     //document.getElementById('keywords').value = window.sessionStorage.keywords0;
+    //} else {      todo
       show = window.sessionStorage.show;
       window.sessionStorage.clear();
       window.sessionStorage.show = show;
-      window.sessionStorage.docu_id = docu_id;
+      //window.sessionStorage.docu_id = docu_id;
       analyze();
-    }
+    //}
     if (window.sessionStorage.explist != null){
       explist = JSON.parse(window.sessionStorage.explist);
       createRes();
@@ -74,9 +74,9 @@ function createUI(show) {
     toppos = window.pageYOffset + 10;
     if (toppos < 200 && ismanuscript) { toppos = 200; }
     side.style.top = String(toppos)+"px";
-    x = document.getElementsByClassName("redesigndetailsontext")[0];
-    if (x != null)
-      side.style.left = String(getElementLeft(x) + x.offsetWidth + 20) + "px"; //"88%";
+    //x = document.getElementsByClassName("redesigndetailsontext")[0];  //todo
+    //if (x != null)
+      //side.style.left = String(getElementLeft(x) + x.offsetWidth + 20) + "px"; //"88%";
     side.style.right = "10px";
     side.style.width = "270px";
     div = document.getElementById("result");
@@ -109,20 +109,9 @@ function createUI(show) {
   col.colSpan = "2"; col.align = "left"; col.style.background = "#FAE6BE";
   txt = document.createTextNode(" Reviewer Recommender");
   col.appendChild(txt);
-  journal = window.location.href.replace(/.*\.manuscriptcentral\.com\//, '').replace(/[\/\?].*/, '');
-  if (journal == "tkdd") {
-    txt = document.createTextNode(" for ");
-    col.appendChild(txt);
-    txt = document.createElement('span');
-    txt.appendChild(document.createTextNode("TKDD"));
-    txt.style.fontStyle = "italic";
-    txt.style.color = "#000066";
-    txt.style.textDecoration = "underline";
-    col.appendChild(txt);
-  }
   row.appendChild(col);
   img = document.createElement("img");
-  img.src = chrome.extension.getURL("resource/close.png");
+  img.src = chrome.runtime.getURL("resource/close.png");
   img.style.height = "16px"; img.align = "right";
   img.onclick = function(){
     $("#side").hide();
@@ -188,7 +177,7 @@ function createUI(show) {
   col = document.createElement('td'); col.colSpan = "2";
   inp = document.createElement('textarea');
   if (isreviewing) { inp.value = "Analyzing..."; }
-  inp.id = 'keywords'; inp.type = 'text';
+  inp.id = 'keywords'; inp.type = 'text'; inp.style.fontFamily = "Verdana"; inp.style.fontSize = "11px";
   inp.onkeydown = function() { if (event.keyCode == 13) query(); };
   inp.style.width = "250px"; inp.style.height = "60px"; inp.style.resize = "none";
   col.appendChild(inp); row.appendChild(col); qtb.appendChild(row);
@@ -289,6 +278,7 @@ function createUI(show) {
   opt = document.createElement('option'); opt.text = 'Default'; opt.value = ""; sel.add(opt, null);
   col.appendChild(sel);
 
+  //todo
   url = "https://raw.githubusercontent.com/thomas0809/ReviewerConfigure/master/journal.json"; 
   $.get(url, function(data, status) {
       var conf = JSON.parse(data);
@@ -309,17 +299,6 @@ function createUI(show) {
       }
   });
 
-  /*sub = document.createElement("input");
-  sub.type = "image"; sub.src = chrome.extension.getURL("resource/title.png");
-  sub.style.width = "80px";
-  sub.style.marginTop = "4px"; sub.style.marginBottom = "4px"; sub.style.marginRight = "4px";
-  sub.align = "center"; sub.onclick = query;
-  col.appendChild(sub);
-  sub = document.createElement("input");
-  sub.type = "image"; sub.src = chrome.extension.getURL("resource/co-author.png");
-  sub.style.width = "80px"; sub.style.marginTop = "4px"; sub.style.marginBottom = "4px";
-  sub.align = "center"; sub.onclick = query;
-  col.appendChild(sub);*/
   row.appendChild(col);
   qtb.appendChild(row);
 
@@ -378,7 +357,8 @@ function createUI(show) {
   img.id = "loading"; img.align = "center";
   img.src = chrome.extension.getURL("resource/loading.gif");
   img.style.filter = "chroma(color=#ffffff)";
-  img.style.display = "none";
+  img.style.display = "none"; 
+  img.style.maxWidth="10%"; img.style.border="0";
   div.appendChild(img);
   rtb = document.createElement("table");
   rtb.id = "rtb"; rtb.style.width = "97%"; rtb.style.maxWidth = "97%"; rtb.style.wordWrap = "break-word";

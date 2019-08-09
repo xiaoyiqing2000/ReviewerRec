@@ -348,7 +348,7 @@ function createRes() {
         document.getElementById("select"+String(j)).src = chrome.extension.getURL("resource/select.png");
       }
       document.getElementById("select"+String(this.value)).src = chrome.extension.getURL("resource/selected.png");
-      fillin(this.value);
+      //fillin(this.value);
       url = "https://api.aminer.org/api/reviewer/workload?id=" + explist[this.value].id;
       $.get(url);
     }
