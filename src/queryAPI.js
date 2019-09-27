@@ -84,7 +84,7 @@ function getExpertList(words) {
       txt = x.options[x.selectedIndex].text;
       url = url + "&language=" + txt;
     }
-    url = url + "&roster=" + document.getElementById("roster").value;
+    url = url + "&roster=" + "5d551094530c705f51c3edd0";
 
     $.get(url, function(data, status){
       statechange(data);

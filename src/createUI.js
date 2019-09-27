@@ -27,19 +27,12 @@ if (ismanuscript) {
     window.sessionStorage.clear();
   } else {
     chrome.runtime.sendMessage("ok");
-    //todo
-    //docu_id = document.getElementsByName('XIK_DOCU_ID')[0].value;
-    //alert(docu_id);
     if (window.sessionStorage.keywords0 == null && window.sessionStorage.keywords != null) {
       window.sessionStorage.keywords0 = window.sessionStorage.keywords;
     }
-    //if (window.sessionStorage.docu_id == docu_id && window.sessionStorage.keywords0 != null){
-     //document.getElementById('keywords').value = window.sessionStorage.keywords0;
-    //} else {      todo
       show = window.sessionStorage.show;
       window.sessionStorage.clear();
       window.sessionStorage.show = show;
-      //window.sessionStorage.docu_id = docu_id;
       analyze();
     //}
     if (window.sessionStorage.explist != null){
@@ -74,9 +67,6 @@ function createUI(show) {
     toppos = window.pageYOffset + 10;
     if (toppos < 200 && ismanuscript) { toppos = 200; }
     side.style.top = String(toppos)+"px";
-    //x = document.getElementsByClassName("redesigndetailsontext")[0];  //todo
-    //if (x != null)
-      //side.style.left = String(getElementLeft(x) + x.offsetWidth + 20) + "px"; //"88%";
     side.style.right = "10px";
     side.style.width = "270px";
     div = document.getElementById("result");
@@ -239,9 +229,9 @@ function createUI(show) {
   col = document.createElement('td'); col.colSpan = "2";
   col.appendChild(document.createTextNode("Location:  "));
   sel = document.createElement('select'); sel.id = 'location'; sel.style.width = "55px";
+  opt = document.createElement("option"); opt.text = "China"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "All"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "USA"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "China"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "Taiwan"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "Japan"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "Canada"; sel.add(opt, null);
@@ -250,9 +240,9 @@ function createUI(show) {
   col.appendChild(sel);
   col.appendChild(document.createTextNode("   Language:  "));
   sel = document.createElement('select'); sel.id = 'language'; sel.style.width = "55px";
+  opt = document.createElement("option"); opt.text = "Chinese"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "All"; sel.add(opt, null);
   opt = document.createElement("option"); opt.text = "English"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "Chinese"; sel.add(opt, null);
   col.appendChild(sel);
   row.appendChild(col);
   qtb.appendChild(row);
