@@ -13,3 +13,7 @@ Notable changes of Reviewer Recommender after version 3.0.4 will be documented i
 - Fix the bug of failing to analyze keywords. (analyze.js)
 - Fix the bug of failing to create author list. (analyze.js)
 - Add function to add current reviewers and authors in the manuscript info to the reviewer roster candidate of this extension.(analyze.js)
+
+## [3.0.6]
+
+-Update 5 years token
