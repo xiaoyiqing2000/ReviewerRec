@@ -335,7 +335,7 @@ function addOneScholarReviewerRoster(name, affiliation, email) {
       }
       var averageSim = sumSim / overallSimilarity.length;
       url = "https://apiv2.aminer.cn/magic";
-      var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyLXZTT05LV0VzelBjVTY0QzlVTnJzdk9cL1ZQYndteFNBUTVMNkNnSmJOcGZNZFhSYkNEZURuSUFRcWRcL3poemhlTkZXSWIrZGJMTDZwOFV1cVwvdXpMc0pxbUtjY0t6YkdvK0ZqNzlKMEI5eHc9PSIsInVpZCI6IjU0ZjUxMTJlNDVjZTFiYzZkNTYzYjhkOSIsInNyYyI6ImFtaW5lciIsInJvbGVzIjpbInJvb3QiLCJyb3N0ZXJfZWRpdG9yIiwidGVzdHJvbGUiXSwiaXNzIjoiYXBpLmFtaW5lci5vcmciLCJleHAiOjE1NjcwNTk0NzcsImlhdCI6MTU2NDQ2NzQ3NywianRpIjoiZjc3YzczMDRjMzVhYWNiOTRiYjI1NDQwM2UzMjg3MzZiZDE2YzA4YTBjNjkzZjI1NGI0OTBkY2I0NGEzZmU4MjdjNTMwMDdkZWU3ZDdkYTRkYzAyODYwNDk3NmY1MjcxNWM4OGYxMDMxMjkyZWNmOGRiMzFhODI0MDIwNzFmNGUyM2UzNjFiMmEzMzQzOGZiNmRiN2FmODlmNTEyYjlhNjQ5ODlhY2QxYjc2MDRiZDY1Mjc2YmYwNTA5ZDY1ZmJhNTFlY2QxNjEyMGJmODYyMGQ2NzRmZjFlN2I3OTVhODM4ZjMwMzg2M2EyODNlN2MzNjc4N2QyMDY2YjM5MTViMyIsImVtYWlsIjoiaGRfeWFuZ3ltQHNpbmEuY29tIn0.9FNPSDdHOZG9Ek8v2M2yxT1bdoiwKU_FvbYi_UGZSbc";
+      var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFwaUBhbWluZXIuY24iLCJleHAiOjE3Mjc0MDU2NzIsImlhdCI6MTU2OTcyNTY3MiwibmJmIjoxNDQ0NDc4NDAwLCJyb2xlcyI6WyJwbGF0Zm9ybSJdLCJzcmMiOiJhbWluZXIiLCJ1aWQiOiI1ZDkwMWJiMTdiOWZlMDIzNWMxMmEwODIifQ.iSq2KlcccBvWVj7AKyJ0vx1YFbd-KhfD2AKrXOdVwPo";
       if (averageSim >= 0.6) {
         var id = curScholar.id;
         //add to candidate. roster id is "5d42844e7390bff0dbf05b14"
