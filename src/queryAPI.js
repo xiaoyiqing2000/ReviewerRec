@@ -18,8 +18,8 @@ function query() {
   window.sessionStorage.inp4 = document.getElementById("hindex4").checked;
   document.getElementById('rankorder').selectedIndex = 0;
   wordlist = [];
-  for (var i in words){
-    if (words[i].length > 4){
+  for (var i in words) {
+    if (words[i].length > 4) {
       wordlist.push(words[i]); //alert(words[i]);
     }
   }
@@ -32,7 +32,8 @@ function query() {
 
 function binScis(name) {
   name = name.replace(/[^a-zA-z]/g, '');
-  var l = -1; var r = scis.length;
+  var l = -1;
+  var r = scis.length;
   while (l < r - 1) {
     var mid = Math.floor((l + r) / 2);
     if (scis[mid] <= name)
@@ -65,13 +66,26 @@ function getExpertList(words) {
     //alert(words[i]);
     lists.push([]);
     //var url = "https://api.aminer.org/api/search/people/multi?query="+words[i]+"&size=500";
-    var url = "https://api.aminer.org/api/reviewer/search?query="+words[i]+"&size=100";
+    var url = "https://api.aminer.org/api/reviewer/search?query=" + words[i] + "&size=100";
     ele = document.getElementById('hindexform').elements;
-    h1 = 200; h2 = 0;
-    if (ele[0].checked) { if (0 < h1)  h1 = 0;  if (10 > h2) h2 = 10; }
-    if (ele[1].checked) { if (10 < h1) h1 = 10; if (20 > h2) h2 = 20; }
-    if (ele[2].checked) { if (20 < h1) h1 = 20; if (30 > h2) h2 = 30; }
-    if (ele[3].checked) { if (30 < h1) h1 = 30; h2 = 200; }
+    h1 = 200;
+    h2 = 0;
+    if (ele[0].checked) {
+      if (0 < h1) h1 = 0;
+      if (10 > h2) h2 = 10;
+    }
+    if (ele[1].checked) {
+      if (10 < h1) h1 = 10;
+      if (20 > h2) h2 = 20;
+    }
+    if (ele[2].checked) {
+      if (20 < h1) h1 = 20;
+      if (30 > h2) h2 = 30;
+    }
+    if (ele[3].checked) {
+      if (30 < h1) h1 = 30;
+      h2 = 200;
+    }
     if (h1 != 200 && h2 != 0)
       url = url + "&hindex1=" + h1 + "&hindex2=" + h2;
     if (document.getElementById('location').selectedIndex != 0) {
@@ -86,19 +100,24 @@ function getExpertList(words) {
     }
     url = url + "&roster=" + "5d551094530c705f51c3edd0";
 
-    $.get(url, function(data, status){
+    $.get(url, function (data, status) {
       statechange(data);
     });
     //testNewAlgorithm();
-    function testNewAlgorithm(){
+    function testNewAlgorithm() {
       var url = "http://166.111.7.105:9005/api/reviewer/query"
-      var data = {"query":words[i], "size":500, "hindex1":h1, "hindex2":h2}
+      var data = {
+        "query": words[i],
+        "size": 500,
+        "hindex1": h1,
+        "hindex2": h2
+      }
       data.authors = JSON.parse(window.sessionStorage.authors)
       $.ajax({
-        type : "POST",
-        url : url,
-        data : $.toJSON(data),
-        contentType : "application/json"
+        type: "POST",
+        url: url,
+        data: $.toJSON(data),
+        contentType: "application/json"
       });
     }
   }
@@ -113,19 +132,19 @@ function statechange(strdata) {
   lists.push([]);
   var res = data.results;
   for (var j in res) {
-    if (res[j].affiliation != '' && res[j].affiliation != null
-      && res[j].email != '' && res[j].email != null) {
+    if (res[j].affiliation != '' && res[j].affiliation != null &&
+      res[j].email != '' && res[j].email != null) {
       lists[i].push(res[j]);
     }
   }
   for (var j in res) {
-    if (!(res[j].affiliation != '' && res[j].affiliation != null
-      && res[j].email != '' && res[j].email != null)) {
+    if (!(res[j].affiliation != '' && res[j].affiliation != null &&
+        res[j].email != '' && res[j].email != null)) {
       lists[i].push(res[j]);
     }
   }
   if (finished == total) {
-  //alert(total);
+    //alert(total);
     explist = [];
     expall = [];
     var maxlen = 0;
@@ -134,14 +153,15 @@ function statechange(strdata) {
         maxlen = lists[i].length;
     for (var j = 0; j < maxlen; j++)
       for (var i = 0; i < total; i++) {
-        if (lists[i][j] != null ) {
+        if (lists[i][j] != null) {
           var expcheck = true;
           for (var k in expall)
-            if (expall[k].id == lists[i][j].id){
-              expcheck = false; break;
+            if (expall[k].id == lists[i][j].id) {
+              expcheck = false;
+              break;
             }
           if (!expcheck) continue;
-            expall.push(lists[i][j]);
+          expall.push(lists[i][j]);
         }
       }
     for (var i in expall)
@@ -169,12 +189,12 @@ function searchNameAminer() {
   str = document.getElementById("searchname").value;
   document.getElementById('rankorder').selectedIndex = 2;
   explist = [];
-  var url = "https://api.aminer.org/api/reviewer/search?query="+str+"&size=100";
+  var url = "https://api.aminer.org/api/reviewer/search?query=" + str + "&size=100";
   // var url = "https://api.aminer.org/api/search/person?query=" + str + "&size=100";
   function formatData(data) {
     var formated = {}
     results = []
-    for (var i in data.result){
+    for (var i in data.result) {
       var person = data.result[i];
       var newperson = {}
       newperson.name = person.name;
@@ -199,22 +219,23 @@ function searchNameAminer() {
     formated.results = results;
     return formated;
   }
-  $.get(url, function(data, status){
-      // var formated = formatData(data);
-      // console.log(JSON.stringify(formated));
-      data = JSON.parse(data);
-      console.log(JSON.stringify(data));
+  $.get(url, function (data, status) {
+    // var formated = formatData(data);
+    // console.log(JSON.stringify(formated));
+    data = JSON.parse(data);
+    console.log(JSON.stringify(data));
 
-      for (var i in data.results){
-        explist.push(data.results[i]);
-      }
-      changeOrder();
-    });
+    for (var i in data.results) {
+      explist.push(data.results[i]);
+    }
+    changeOrder();
+  });
 }
 
 function filter() {
   ans = [];
-  function checkName(already, expert){
+
+  function checkName(already, expert) {
     // console.log(JSON.stringify(already));
     // console.log(JSON.stringify(expert));
 
@@ -226,16 +247,16 @@ function filter() {
       return true;
     return false;
   }
-  for (var i in explist){
+  for (var i in explist) {
     exp = explist[i];
     var flag = false;
 
     reviewers = [];
     if (sessionStorage.reviewers != null)
       reviewers = JSON.parse(sessionStorage.reviewers);
-    for (var r in reviewers){
+    for (var r in reviewers) {
       reviewer = reviewers[r];
-      if (checkName(reviewer, exp)){
+      if (checkName(reviewer, exp)) {
         // console.log(JSON.stringify(reviewer.name));
         flag = true;
         break;
@@ -246,9 +267,9 @@ function filter() {
     authors = [];
     if (sessionStorage.authors != null)
       authors = JSON.parse(sessionStorage.authors);
-    for (var r in authors){
+    for (var r in authors) {
       author = authors[r];
-      if (checkName(author, exp)){
+      if (checkName(author, exp)) {
         // console.log(JSON.stringify(author.name));
         flag = true;
         break;
@@ -264,25 +285,25 @@ function filter() {
 function changeOrder() {
   od = document.getElementById('rankorder').selectedIndex;
   if (od == 0)
-    explist.sort(function(a,b) {
+    explist.sort(function (a, b) {
       if (Number(a.relevance) > Number(b.relevance)) return -1;
       if (Number(a.relevance) < Number(b.relevance)) return 1;
       return 0;
     });
   if (od == 1)
-    explist.sort(function(a,b) {
+    explist.sort(function (a, b) {
       if (Number(a.h_index) < Number(b.h_index)) return -1;
       if (Number(a.h_index) > Number(b.h_index)) return 1;
       return 0;
     });
   if (od == 2)
-    explist.sort(function(a,b) {
+    explist.sort(function (a, b) {
       if (Number(a.h_index) > Number(b.h_index)) return -1;
       if (Number(a.h_index) < Number(b.h_index)) return 1;
       return 0;
     });
   if (od == 3)
-    explist.sort(function(a,b) {
+    explist.sort(function (a, b) {
       if (a.affiliation == null) return 1;
       if (b.affiliation == null) return -1;
       if (a.affiliation < b.affiliation) return -1;
@@ -292,7 +313,7 @@ function changeOrder() {
 
   email = []
   noemail = []
-  for (var i in explist){
+  for (var i in explist) {
     exp = explist[i];
     if (exp.email == '')
       noemail.push(exp);
@@ -319,12 +340,14 @@ function createRes() {
   for (var i in explist) {
     exptb = document.createElement('table');
     exptb.id = "exptb" + String(i);
-    exptb.border = 0; exptb.cellPadding = 0;
+    exptb.border = 0;
+    exptb.cellPadding = 0;
 
     row = document.createElement('tr');
 
     col = document.createElement('td');
-    col.style.width = "42px"; col.style.maxWidth = "42px";
+    col.style.width = "42px";
+    col.style.maxWidth = "42px";
     a = document.createElement("a");
     if (explist[i].homepage == "" || explist[i].homepage == null)
       a.href = "javascript:void(0);";
@@ -332,42 +355,50 @@ function createRes() {
       a.href = explist[i].homepage;
       a.target = "_blank";
     }
-    a.style.width = "inherit"; a.style.height = "inherit";
+    a.style.width = "inherit";
+    a.style.height = "inherit";
     img = document.createElement('img');
     img.src = explist[i].picture_url;
     if (explist[i].picture_url == "" || explist[i].picture_url == null)
       img.src = chrome.extension.getURL("resource/default.jpg");
-    img.style.width = "inherit"; img.style.height = "inherit";
+    img.style.width = "inherit";
+    img.style.height = "inherit";
     a.appendChild(img);
-    col.appendChild(a); col.style.verticalAlign = "top";
-    slt = document.createElement('input'); slt.id = "select"+String(i);
-    slt.type = "image"; slt.value = i; slt.style.width = "43px";
+    col.appendChild(a);
+    col.style.verticalAlign = "top";
+    slt = document.createElement('input');
+    slt.id = "select" + String(i);
+    slt.type = "image";
+    slt.value = i;
+    slt.style.width = "43px";
     slt.src = chrome.extension.getURL("resource/select.png");
-    slt.onclick = function() {
-      for (var j in explist){
-        document.getElementById("select"+String(j)).src = chrome.extension.getURL("resource/select.png");
+    slt.onclick = function () {
+      for (var j in explist) {
+        document.getElementById("select" + String(j)).src = chrome.extension.getURL("resource/select.png");
       }
-      document.getElementById("select"+String(this.value)).src = chrome.extension.getURL("resource/selected.png");
+      document.getElementById("select" + String(this.value)).src = chrome.extension.getURL("resource/selected.png");
       //fillin(this.value);
       url = "https://api.aminer.org/api/reviewer/workload?id=" + explist[this.value].id;
       $.get(url);
     }
     col.appendChild(slt);
-    col.style.verticalAlign = "top"; col.style.paddingBottom = "10px";
+    col.style.verticalAlign = "top";
+    col.style.paddingBottom = "10px";
     row.appendChild(col);
 
     col = document.createElement('td');
-    col.style.width = "100%"; col.style.maxWidth = "100%";
+    col.style.width = "100%";
+    col.style.maxWidth = "100%";
     a = document.createElement("a");
-    a.href = "https://aminer.org/profile/"+explist[i].id;
+    a.href = "https://aminer.org/profile/" + explist[i].id;
     a.target = "_blank";
     txt = document.createElement('span');
-    txt.style.fontSize = "14px"; txt.style.fontWeight = "bold"; txt.style.color = "black";
-    if(explist[i].name_zh!="")
-    {
+    txt.style.fontSize = "14px";
+    txt.style.fontWeight = "bold";
+    txt.style.color = "black";
+    if (explist[i].name_zh != "") {
       txt.appendChild(document.createTextNode(explist[i].name_zh));
-    }
-    else{
+    } else {
       txt.appendChild(document.createTextNode(explist[i].name));
     }
     a.appendChild(txt);
@@ -375,27 +406,34 @@ function createRes() {
     if (checkScis(explist[i].name)) {
       img = document.createElement("img");
       img.src = chrome.extension.getURL("resource/logo.jpg");
-      img.style.width = "15px"; img.style.height = "15px";
+      img.style.width = "15px";
+      img.style.height = "15px";
       img.style.marginLeft = "3px";
       col.appendChild(img);
     }
     col.appendChild(document.createElement('br'));
 
     txt = document.createElement('span');
-    txt.style.fontFamily = "times"; txt.style.color = "grey";
-    if (explist[i].position != null && explist[i].position.length > 100) { explist[i].position = null; }
+    txt.style.fontFamily = "times";
+    txt.style.color = "grey";
+    if (explist[i].position != null && explist[i].position.length > 100) {
+      explist[i].position = null;
+    }
     txt.appendChild(document.createTextNode(' (' + explist[i].position + ', ' + explist[i].affiliation + ')'));
-    if (explist[i].position != null && explist[i].position != ""
-      && explist[i].affiliation != null && explist[i].affiliation != "") {
-      col.appendChild(txt); col.appendChild(document.createElement('br'));
+    if (explist[i].position != null && explist[i].position != "" &&
+      explist[i].affiliation != null && explist[i].affiliation != "") {
+      col.appendChild(txt);
+      col.appendChild(document.createElement('br'));
     }
 
     function addNameValue(name, value, breakline) {
       txt = document.createElement('span');
-      txt.style.fontFamily = "arial"; txt.style.fontWeight = "700";
+      txt.style.fontFamily = "arial";
+      txt.style.fontWeight = "700";
       txt.appendChild(document.createTextNode(name + ": "));
       col.appendChild(txt);
-      txt = document.createElement('span'); txt.style.fontFamily = "arial";
+      txt = document.createElement('span');
+      txt.style.fontFamily = "arial";
       txt.appendChild(value);
       col.appendChild(txt);
       if (breakline) col.appendChild(document.createElement('br'));
@@ -431,7 +469,8 @@ function createRes() {
     var wl = explist[i].workload;
     if (wl == undefined) wl = 0;
     if (wl > 100) wl = 100;
-    workload.max = maxworkload; workload.value = wl;
+    workload.max = maxworkload;
+    workload.value = wl;
     col.appendChild(workload);
     row.appendChild(col);
     exptb.appendChild(row);
@@ -458,21 +497,25 @@ function createRes() {
     tbdown = document.createElement("input");
     tbdown.type = "image";
     tbdown.src = chrome.extension.getURL("resource/thumb_down.png");
-    tbdown.style.height = "15px"; tbdown.align = "right"; tbdown.style.marginRight = "10px";
+    tbdown.style.height = "15px";
+    tbdown.align = "right";
+    tbdown.style.marginRight = "10px";
     tbdown.value = explist[i].id;
     col.appendChild(tbdown);
     tbup = document.createElement("input");
     tbup.type = "image";
     tbup.src = chrome.extension.getURL("resource/thumb_up.png");
-    tbup.style.height = "15px"; tbup.align = "right"; tbup.style.marginRight = "10px";
+    tbup.style.height = "15px";
+    tbup.align = "right";
+    tbup.style.marginRight = "10px";
     tbup.value = explist[i].id;
     col.appendChild(tbup);
-    tbdown.onclick = function(){
+    tbdown.onclick = function () {
       //this.disabled = true;
       url = "https://api.aminer.org/api/reviewer/rating?id=" + this.value + "&delta=-1";
       $.get(url);
     }
-    tbup.onclick = function(){
+    tbup.onclick = function () {
       //this.disabled = true;
       url = "https://api.aminer.org/api/reviewer/rating?id=" + this.value + "&delta=1";
       $.get(url);
@@ -495,7 +538,7 @@ function createRes() {
   $('#loading').hide();
   $('#more').show();
   $('#menu').show();
-  if (window.sessionStorage.displaynum == undefined){
+  if (window.sessionStorage.displaynum == undefined) {
     window.sessionStorage.displaynum = "20";
   }
   displaynum = Number(window.sessionStorage.displaynum);
@@ -505,12 +548,12 @@ function createRes() {
 function displayRes() {
   for (var i in explist) {
     if (i >= displaynum) break;
-    $("#exprow"+String(i)).show();
+    $("#exprow" + String(i)).show();
   }
   if (displaynum > explist.length)
     displaynum = explist.length;
   span = document.getElementById('resnum');
-  span.innerHTML = " (共搜索到" + String(explist.length)+" 专家, 显示前 "+String(displaynum)+" 名)";
+  span.innerHTML = " (共搜索到" + String(explist.length) + " 专家, 显示前 " + String(displaynum) + " 名)";
 }
 
 function showMore() {
@@ -560,5 +603,3 @@ function fillin(i) {
   //3.05
   document.getElementsByName("EMAIL_ADDRESS")[0].value = eadd;
 }
-
-

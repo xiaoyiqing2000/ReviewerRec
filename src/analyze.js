@@ -52,7 +52,7 @@ function analyze() {
     today = new Date();
     window.sessionStorage.date = today.toDateString();
     document.getElementById('keywords').value = window.sessionStorage.keywords;
-    document.getElementById("keywords").style.fontFamily="Verdana";
-    document.getElementById("keywords").style.fontSize="11px";
+    document.getElementById("keywords").style.fontFamily = "Verdana";
+    document.getElementById("keywords").style.fontSize = "11px";
   }
 }
