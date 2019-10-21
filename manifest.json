@@ -1,7 +1,7 @@
 {
   "name": "审稿人推荐系统",
   "description": "Reviewer Recommender for Magtech",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "permissions": [
     "activeTab", "downloads", "<all_urls>", "tabs", "storage"
   ],
