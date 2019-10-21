@@ -363,7 +363,13 @@ function createRes() {
     a.target = "_blank";
     txt = document.createElement('span');
     txt.style.fontSize = "14px"; txt.style.fontWeight = "bold"; txt.style.color = "black";
-    txt.appendChild(document.createTextNode(explist[i].name));
+    if(explist[i].name_zh!="")
+    {
+      txt.appendChild(document.createTextNode(explist[i].name_zh));
+    }
+    else{
+      txt.appendChild(document.createTextNode(explist[i].name));
+    }
     a.appendChild(txt);
     col.appendChild(a);
     if (checkScis(explist[i].name)) {
@@ -395,16 +401,16 @@ function createRes() {
       if (breakline) col.appendChild(document.createElement('br'));
     }
 
-    addNameValue("H-index", document.createTextNode(explist[i].h_index), true);
+    addNameValue("h指数", document.createTextNode(explist[i].h_index), true);
     str = '';
     if (explist[i].interests != null) str += explist[i].interests.replace(/,/g, ", ");
-    addNameValue("Expertise", document.createTextNode(str), true);
+    addNameValue("研究领域", document.createTextNode(str), true);
     a = document.createElement("a");
     a.href = "mailto:" + explist[i].email;
     a.style.wordBreak = "break-all";
     if (explist[i].email == null) explist[i].email = "unknown";
     a.appendChild(document.createTextNode(explist[i].email));
-    addNameValue("E-mail", a, true);
+    addNameValue("邮件", a, true);
 
     col.style.verticalAlign = "top";
 
@@ -414,7 +420,7 @@ function createRes() {
 
     row = document.createElement('tr');
     col = document.createElement('td');
-    col.appendChild(document.createTextNode("Workload:"));
+    col.appendChild(document.createTextNode("工作量:"));
     col.style.fontFamily = "'Lucida Sans Unicode', 'Lucida Grande', sans-serif";
     //col.style.fontStyle = "italic";
     col.style.fontWeight = 600;
@@ -432,7 +438,7 @@ function createRes() {
 
     row = document.createElement('tr');
     col = document.createElement('td');
-    col.appendChild(document.createTextNode("Rating:"));
+    col.appendChild(document.createTextNode("评价:"));
     col.style.fontFamily = "'Lucida Sans Unicode', 'Lucida Grande', sans-serif";
     //col.style.fontStyle = "italic";
     col.style.fontWeight = 600;
@@ -504,7 +510,7 @@ function displayRes() {
   if (displaynum > explist.length)
     displaynum = explist.length;
   span = document.getElementById('resnum');
-  span.innerHTML = " ("+String(displaynum)+" of "+String(explist.length)+" experts)";
+  span.innerHTML = " (共搜索到" + String(explist.length)+" 专家, 显示前 "+String(displaynum)+" 名)";
 }
 
 function showMore() {

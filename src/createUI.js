@@ -86,7 +86,7 @@ function createUI(show) {
 
   setSide();
   side.style.fontFamily = "Verdana";
-  side.style.fontSize = "11px";
+  side.style.fontSize = "13px";
 
 
   table = document.createElement('table');
@@ -97,7 +97,7 @@ function createUI(show) {
   row = document.createElement('tr');
   col = document.createElement('th');
   col.colSpan = "2"; col.align = "left"; col.style.background = "#FAE6BE";
-  txt = document.createTextNode(" Reviewer Recommender");
+  txt = document.createTextNode(" 审稿人推荐系统");
   col.appendChild(txt);
   row.appendChild(col);
   img = document.createElement("img");
@@ -116,7 +116,7 @@ function createUI(show) {
 
   row = document.createElement('tr'); $(row).hide();
   col = document.createElement('td');
-  col.appendChild(document.createTextNode("Title"));
+  col.appendChild(document.createTextNode("文题"));
   row.appendChild(col);
   col = document.createElement('td');
   inp = document.createElement('input');
@@ -126,7 +126,7 @@ function createUI(show) {
 
   row = document.createElement('tr'); $(row).hide();
   col = document.createElement('td');
-  col.appendChild(document.createTextNode("Authors"));
+  col.appendChild(document.createTextNode("作者"));
   row.appendChild(col);
   col = document.createElement('td');
   inp = document.createElement('input');
@@ -136,7 +136,7 @@ function createUI(show) {
 
   row = document.createElement('tr'); $(row).hide();
   col = document.createElement('td');
-  col.appendChild(document.createTextNode("Abstract"));
+  col.appendChild(document.createTextNode("摘要"));
   row.appendChild(col);
   col = document.createElement('td');
   inp = document.createElement('textarea');
@@ -147,7 +147,7 @@ function createUI(show) {
 
   row = document.createElement('tr');
   col = document.createElement('td'); col.colSpan = "2";
-  col.appendChild(document.createTextNode("Keywords (Seperated by \",\"):"));
+  col.appendChild(document.createTextNode("关键词 (用 \",\" 分隔):"));
   img = document.createElement("input"); img.value = 0;
   img.type = "image"; img.src = chrome.extension.getURL("resource/refresh.png");
   img.style.height = "16px"; img.align = "right"; $(img).hide();
@@ -175,7 +175,7 @@ function createUI(show) {
   row = document.createElement('tr');
   row.style.height = "24px";
   col = document.createElement('td'); col.colSpan = "2";
-  col.appendChild(document.createTextNode("H-index:  "));
+  col.appendChild(document.createTextNode("h指数:  "));
   form = document.createElement('form'); form.style.display = 'inline'; form.id = 'hindexform';
   inp1 = document.createElement('input'); inp1.type = 'checkbox'; inp1.id = 'hindex1'; inp1.style.margin = 0;
   form.appendChild(inp1); form.appendChild(document.createTextNode('<10 '));
@@ -227,22 +227,22 @@ function createUI(show) {
   row = document.createElement('tr');
   row.style.height = "24px";
   col = document.createElement('td'); col.colSpan = "2";
-  col.appendChild(document.createTextNode("Location:  "));
-  sel = document.createElement('select'); sel.id = 'location'; sel.style.width = "55px";
-  opt = document.createElement("option"); opt.text = "China"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "All"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "USA"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "Taiwan"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "Japan"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "Canada"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "United Kingdom"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "German"; sel.add(opt, null);
+  col.appendChild(document.createTextNode("地点:  "));
+  sel = document.createElement('select'); sel.id = 'location'; sel.style.width = "80px";
+  opt = document.createElement("option"); opt.text = "所有"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "中国大陆"; sel.add(opt, null); 
+  opt = document.createElement("option"); opt.text = "美国"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "台湾地区"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "日本"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "加拿大"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "英国"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "德国"; sel.add(opt, null);
   col.appendChild(sel);
-  col.appendChild(document.createTextNode("   Language:  "));
+  col.appendChild(document.createTextNode("   语言:  "));
   sel = document.createElement('select'); sel.id = 'language'; sel.style.width = "55px";
-  opt = document.createElement("option"); opt.text = "Chinese"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "All"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "English"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "中文"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "所有"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "英文"; sel.add(opt, null);
   col.appendChild(sel);
   row.appendChild(col);
   qtb.appendChild(row);
@@ -302,7 +302,7 @@ function createUI(show) {
   col = document.createElement('th');
   col.colSpan = "2"; col.align = "left";
   col.style.background = "#FAE6BE";
-  txt = document.createTextNode(" Result ");
+  txt = document.createTextNode(" 结果 ");
   col.appendChild(txt);
   span = document.createElement('span');
   span.id = "resnum";
@@ -326,9 +326,9 @@ function createUI(show) {
   col.appendChild(inp);
   sel = document.createElement("select"); sel.id = "rankorder"; sel.onchange = function(){ changeOrder();};
   sel.style.marginLeft = "10px"; sel.style.width = "85px"; sel.style.verticalAlign = "middle";
-  opt = document.createElement("option"); opt.text = "Relevance"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "H-index↑"; sel.add(opt, null);
-  opt = document.createElement("option"); opt.text = "H-index↓"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "相关度"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "h指数↑"; sel.add(opt, null);
+  opt = document.createElement("option"); opt.text = "h指数↓"; sel.add(opt, null);
   //opt = document.createElement("option"); opt.text = "Nationality"; sel.add(opt, null);
   //opt = document.createElement("option"); opt.text = "Affiliation"; sel.add(opt, null);
   col.appendChild(sel);

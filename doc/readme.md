@@ -10,7 +10,7 @@
 
 ## 使用
 
-进入《精准医学杂志》的[编辑中心](http://jpmed.qdu.edu.cn/Journalx_jzyx/manuscript/Editor_Main.action)，选择一个稿件，进入审稿页面。点击浏览器右上角插件区的博士帽图标即可使用该插件，该插件会自动提取稿件的英文关键词，点击"Search"图标即可开始搜索，结果在右下侧显示。可以加入筛选条件，默认搜索中国地区的中文使用者，H-index在0-20之间。可以调整排序依据，默认为相关度排序。注意，无论选择何种方式排序，为了方便联络均会把有邮箱的审稿人排在前面。
+进入《精准医学杂志》的[编辑中心](http://jpmed.qdu.edu.cn/Journalx_jzyx/manuscript/Editor_Main.action)，选择一个稿件，进入审稿页面。点击浏览器右上角插件区的博士帽图标即可使用该插件，该插件会自动提取稿件的英文关键词（若该稿件没有英文关键词，会自动翻译），点击"Search"图标即可开始搜索，结果在右下侧显示。可以加入筛选条件，默认搜索全部地区的中文使用者，H-index在0-20之间。可以调整排序依据，默认为相关度排序。注意，无论选择何种方式排序，为了方便联络均会把有邮箱的审稿人排在前面。
 
 ![reviewer_rec_screenshot](readme.assets/reviewer_rec_screenshot.png)
 
