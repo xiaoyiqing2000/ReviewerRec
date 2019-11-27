@@ -22,17 +22,55 @@ function analyze() {
   //keywords
   div = document.getElementById("edit_submit");
   tbEntries = div.children[0].children[0].children;
+  var enKeywordsStr = "";
+  var chKeyword = [];
   for (var i in tbEntries) {
     try {
       if (tbEntries[i].innerText.match("英文关键词")) {
-        var oriKeywordsStr = tbEntries[i].cells[1].innerText;
-        oriKeywordsStr = oriKeywordsStr.replace(/;/g, ",");
-        oriKeywordsStr = oriKeywordsStr.replace(/^\s+|\s+$/g, "");
-        info.push(oriKeywordsStr);
+        enKeywordsStr = tbEntries[i].cells[1].innerText;
+        enKeywordsStr = enKeywordsStr.replace(/;/g, ",");
+        enKeywordsStr = enKeywordsStr.replace(/^\s+|\s+$/g, "");
+      } else if (tbEntries[i].innerText.match("关键词")) {
+        var chKeywordStr = tbEntries[i].cells[1].innerText;
+        chKeywordStr = chKeywordStr.replace(/\s/g, '');
+        chKeywordStr = chKeywordStr.replace(/[\r\n]/g, "");
+        chKeywordStr = chKeywordStr.replace("；", ";");
+        chKeyword = chKeywordStr.split(";");
+        if (chKeyword[0].match("关键词")) {
+          chKeyword.shift();
+        }
       }
     } catch {
       continue;
     }
+  }
+  if (enKeywordsStr != "") {
+    info.push(enKeywordsStr);
+  } else {
+    $.ajax({
+      url: "https://apiv2.aminer.cn/magic",
+      type: "POST",
+      data: JSON.stringify([{
+        "action": "dm_intellwords.Translate",
+        "parameters": {
+          "query": chKeyword
+        }
+      }]),
+      async: false,
+      success: function (data) {
+        var wordsArr = data.data[0].items[0];
+        var wordsStr = "";
+        for (var i in wordsArr) {
+          if (wordsArr[i].isTranslated) {
+            wordsStr += wordsArr[i].english + ", ";
+          }
+        }
+        if (wordsStr != "") {
+          wordsStr = wordsStr.substr(0, wordsStr.length - 2);
+        }
+        info.push(wordsStr);
+      }
+    })
   }
   info.push("Omitted.");
   //document.getElementById('title').value = info[1];

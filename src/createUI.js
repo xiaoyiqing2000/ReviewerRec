@@ -200,7 +200,7 @@ function createUI(show) {
   col.colSpan = "2";
   inp = document.createElement('textarea');
   if (isreviewing) {
-    inp.value = "Analyzing...";
+    inp.value = "提取中...";
   }
   inp.id = 'keywords';
   inp.type = 'text';
@@ -293,7 +293,7 @@ function createUI(show) {
   row.style.height = "24px";
   col = document.createElement('td');
   col.colSpan = "2";
-  col.appendChild(document.createTextNode("地点:  "));
+  col.appendChild(document.createTextNode("地区:  "));
   sel = document.createElement('select');
   sel.id = 'location';
   sel.style.width = "80px";
