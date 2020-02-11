@@ -3,9 +3,6 @@
 //---------------------------------
 
 function analyze(){
-  //3.0.5
-  //updateKeywords(); //activate when needed. since js cant output to local files, src/tkdeKeywords.txt need to be changed manually
-  //3.0.5
   setField('MANUSCRIPT_DETAILS_OVERRIDE_TASK_TAG','');
   setDataAndNextPage('MANUSCRIPT_DETAILS_SHOW_TAB','Tdetails','ASSOCIATE_EDITOR_MANUSCRIPT_DETAILS');
 
@@ -145,96 +142,7 @@ function analyze(){
 }
 
 
-
-
-//3.0.5
-//update Keywords (activated when needed)
-/*
-function updateKeywords() {
-  keywordsCount = [];
-
-  function countKeywords(data) {
-    for (var i in data.result) {
-      var curReviewerTags = data.result[i].tags;
-      for (var j in curReviewerTags) {
-        //find if tag in array then ++ or push
-        curTag = curReviewerTags[j].t.toLowerCase();
-        var findFlag = false;
-        //change alg: if Levenshtein distance similarity > 0.9 deem as same words
-        for (var k in keywordsCount) {
-          if (similarity(curTag, keywordsCount[k].name) > 0.9) {
-            keywordsCount[k].counts++;
-            findFlag = true;
-          }
-        }
-        if (!findFlag) {
-          var keyword = {};
-          keyword.name = curTag;
-          keyword.counts = 1;
-          keywordsCount.push(keyword);
-        }
-      }
-    }
-  }
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/0/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/100/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/200/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/300/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/400/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/500/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/600/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/700/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/800/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-  })
-  url = "https://api.aminer.cn/api/roster/56f1750f76d9110ef18db5fe/order-by/h_index/offset/900/size/3000";
-  $.get(url, function (data) {
-    countKeywords(data);
-    //bubble sort descend
-    for (var i in keywordsCount) {
-      for (var j = i; j in keywordsCount; j++) {
-        if (keywordsCount[j].counts > keywordsCount[i].counts) {
-          var tmp = keywordsCount[j];
-          keywordsCount[j] = keywordsCount[i];
-          keywordsCount[i] = tmp;
-        }
-      }
-    }
-    //output
-    str = "";
-    for (var i = 0; i < 100; i++) {
-      str += "\"" + keywordsCount[i].name + "\", ";
-    }
-    console.log(str);
-  })
-}
-*/
-// test simlarity with Levenshtein distance  copyrighy https://stackoverflow.com/questions/10473745/compare-strings-javascript-return-of-likely
+// test simlarity with Levenshtein distance
 function editDistance(s1, s2) {
   s1 = s1.toLowerCase();
   s2 = s2.toLowerCase();
