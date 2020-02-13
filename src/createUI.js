@@ -6,7 +6,7 @@ if (url.match("manuscriptcentral.com") != null)
 
 isreviewing = false;
 x = document.getElementsByClassName("redesigndetailsontext")[0];
-if (x != null)
+if (x != null || url == "https://mc.manuscriptcentral.com/tbd-cs")
   isreviewing = true;
 
 txt = $.ajax({url:chrome.extension.getURL("resource/scis.txt"), async : false}).responseText;
@@ -292,6 +292,7 @@ function createUI(show) {
   url = "https://raw.githubusercontent.com/thomas0809/ReviewerConfigure/master/journal.json"; 
   $.get(url, function(data, status) {
       var conf = JSON.parse(data);
+      conf["tbd-cs"] = {defalt: 0, option: false, list: "5e3b9296530c70a34641f96c"};
       var journal = window.location.href.replace(/.*\.manuscriptcentral\.com\//, '').replace(/[\/\?].*/, '');
       //alert(journal);
       if (!(journal in conf)) {
