@@ -276,6 +276,17 @@ function createUI(show) {
   //col.appendChild(p);
   //col.align = "left";
   //col.appendChild(document.createElement('br'));
+
+  //input box for roster
+  col.appendChild(document.createTextNode("Roster ID:  "));
+  rosterInput = document.createElement("input");
+  rosterInput.type = "text";
+  rosterInput.value = "";
+  rosterInput.id = "rosterInput";
+  rosterInput.style.width = "150px";
+  rosterInput.align = "center";
+  col.appendChild(rosterInput);
+
   sub = document.createElement("input");
   sub.type = "image"; sub.src = chrome.extension.getURL("resource/search.png");
   sub.style.width = "150px";
