@@ -303,7 +303,7 @@ function createUI(show) {
   url = "https://raw.githubusercontent.com/thomas0809/ReviewerConfigure/master/journal.json"; 
   $.get(url, function(data, status) {
       var conf = JSON.parse(data);
-      conf["tbd-cs"] = {defalt: 0, option: false, list: "5e3b9296530c70a34641f96c"};
+      conf["tbd-cs"] = {defalt: 0, option: false, list: [{id: "5e3b9296530c70a34641f96c", name: "Data Mining"}]};
       var journal = window.location.href.replace(/.*\.manuscriptcentral\.com\//, '').replace(/[\/\?].*/, '');
       //alert(journal);
       if (!(journal in conf)) {
